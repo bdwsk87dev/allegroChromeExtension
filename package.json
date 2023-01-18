@@ -1,0 +1,17 @@
+{
+  "name": "allegro",
+  "version": "1.0.0",
+  "description": "allegro",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "file-system": "^2.2.2",
+    "fs": "0.0.1-security",
+    "js-file-download": "^0.4.4",
+    "modify-exif": "0.0.1"
+  }
+}
