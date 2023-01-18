@@ -30,10 +30,14 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 chrome.runtime.onMessage.addListener((msg, sender) => {
 	console.log('onMessage action');
 	console.log(msg);
+
+
 	if (msg.action === 'subcategories') {
 		let newURL = "http://stackoverflow.com/";
 		chrome.tabs.create({ url: newURL });
 		console.log(msg.items);
+		chrome.tabs.create({ url: 'https://allegro.pl' + msg.items[0].url });
+		chrome.tabs.create({ url: 'https://allegro.pl' + msg.items[1].url });
 	}
 });
 
