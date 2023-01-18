@@ -1,25 +1,41 @@
 currentTab = 0;
 
+/** Request **/
 function onRequest(request, sender, callback) {
 	if (request.action == "start") {
 		console.log('start button is pressed');
 		chrome.tabs.executeScript(currentTab, {file: 'js/contentscripFindtCategories.js'});
-		chrome.runtime.sendMessage({action: 'getSubcategories'}, null);
+		chrome.tabs.sendMessage(0,{action: 'getSubcategories'}, null);
 	}
 }
 
-chrome.extension.onRequest.addListener(onRequest);
+/** Messages **/
+function onMessage(request, sender, callback) {
+	if (request.action == 'subcategories') {
+		// let newURL = "http://stackoverflow.com/";
+		// chrome.tabs.create({ url: newURL });
+		console.log(request.items);
+		chrome.tabs.create({ url: 'https://allegro.pl' + request.items[0].url });
+		chrome.tabs.create({ url: 'https://allegro.pl' + request.items[1].url });
+	}
+}
 
-// On tab activated in browser
+/** Register actions **/
+chrome.extension.onRequest.addListener(onRequest);
+chrome.runtime.onMessage.addListener(onMessage);
+
+/** Browser actions **/
+/** On tab activated in browser **/
 chrome.tabs.onActivated.addListener(function (activeInfo) {
+	// get current tab id
 	currentTab = activeInfo.tabId;
 	chrome.tabs.get(currentTab, function (tab) {
-		currentUrl = tab.url.split('/')[2];g
+		currentUrl = tab.url.split('/')[2];
 		currentFullUrl = tab.url;
 	});
 });
 
-// On tab updated in browser
+/** On tab updated in browser **/
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 	currentUrl = tab.url.split('/')[2];
 	currentFullUrl = tab.url;
@@ -27,17 +43,5 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 	chrome.browserAction.setBadgeText({text: localStorage['imageCounter']});
 });
 
-chrome.runtime.onMessage.addListener((msg, sender) => {
-	console.log('onMessage action');
-	console.log(msg);
 
-
-	if (msg.action === 'subcategories') {
-		let newURL = "http://stackoverflow.com/";
-		chrome.tabs.create({ url: newURL });
-		console.log(msg.items);
-		chrome.tabs.create({ url: 'https://allegro.pl' + msg.items[0].url });
-		chrome.tabs.create({ url: 'https://allegro.pl' + msg.items[1].url });
-	}
-});
 
