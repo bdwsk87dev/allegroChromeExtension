@@ -5,18 +5,19 @@ function onRequest(request, sender, callback) {
 	if (request.action == "start") {
 		console.log('start button is pressed');
 		chrome.tabs.executeScript(currentTab, {file: 'js/contentscripFindtCategories.js'});
-		chrome.tabs.sendMessage(0,{action: 'getSubcategories'}, null);
+		//chrome.tabs.sendMessage(0,{action: 'getSubcategories'}, null);
+		//chrome.tabs.sendMessage(0,{action: 'getProductsOnPage'}, null);
 	}
 }
 
 /** Messages **/
 function onMessage(request, sender, callback) {
-	if (request.action == 'subcategories') {
-		// let newURL = "http://stackoverflow.com/";
-		// chrome.tabs.create({ url: newURL });
-		console.log(request.items);
-		chrome.tabs.create({ url: 'https://allegro.pl' + request.items[0].url });
-		chrome.tabs.create({ url: 'https://allegro.pl' + request.items[1].url });
+	if (request.action == 'coreParser') {
+
+		console.log(request.result);
+
+		//chrome.tabs.create({ url: 'https://allegro.pl' + request.items[0].url });
+		//chrome.tabs.create({ url: 'https://allegro.pl' + request.items[1].url });
 	}
 }
 
