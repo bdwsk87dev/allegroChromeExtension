@@ -3,7 +3,7 @@ let coreParser = {
     /** Find all products link on the page **/
     getProductsOnPage: function () {
         coreParser.response.items = [];
-        let items = document.querySelectorAll('div.opbox-listing a:first-child');
+        let items = document.querySelectorAll('div.opbox-listing article div div div:first-child a:first-child');
         items.forEach(item => {
             coreParser.response.items.push({'href': item.getAttribute('href')});
         });
