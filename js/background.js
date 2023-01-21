@@ -12,10 +12,14 @@ function logging(message) {
 /** Request **/
 function onRequest(request, sender, callback) {
     if (request.action == "start") {
+        /** log **/
         logging('script started');
 
         /** Get min price set by user **/
         let minPrice = request.minPrice;
+
+        /** log **/
+        logging('minPrice is '+ minPrice);
 
         /** Get last product page **/
         chrome.tabs.executeScript(currentTab, {file: 'js/getLastPage.js'});

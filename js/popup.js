@@ -8,7 +8,7 @@ var popupDownloader = {
     },
     onMessage: function (request, sender, callback){
         if (request.action == "logging"){
-            $('#logger').html($('#logger').html() + request.message);
+            $('#logger').html($('#logger').html() + "<br>" + request.message);
         }
     }
 }
