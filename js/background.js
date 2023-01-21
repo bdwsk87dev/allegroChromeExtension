@@ -8,10 +8,15 @@ function onRequest(request, sender, callback) {
 		/** Get min price set by user **/
 		let minPrice = request.minPrice;
 
+		/** Get last product page **/
+
+
+
+
 		chrome.storage.local.set({
 			minPrice: minPrice
 		}, function () {
-			chrome.tabs.executeScript(currentTab, {file: 'js/contentscripStart.js'});
+			chrome.tabs.executeScript(currentTab, {file: 'js/pageParser.js'});
 		});
 
 
