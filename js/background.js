@@ -40,11 +40,19 @@ function eachPage(){
     currentParsingPage++;
 
     /** Change parsing product list page **/
-    let newUrlTo = currentUrl.substring(currentUrl.search('/?p=/'), currentUrl.length)
+    let newUrlTo = (currentParsingPage>1)?
+        currentUrl.split('?p=')[0]:
+        currentUrl;
+
+    console.log(currentParsingPage);
+    console.log(currentUrl);
+    console.log(newUrlTo + '?p=' + currentParsingPage);
+
     chrome.tabs.update({ url: newUrlTo + '?p=' + currentParsingPage });
 
     /** first page **/
     getProductsLinksOnPage();
+
 }
 
 
@@ -87,4 +95,10 @@ chrome.tabs.onActivated.addListener(function (activeInfo) {
     chrome.tabs.get(currentTab, function (tab) {
         currentUrl = tab.url;
     });
+});
+
+// On tab updated in browser
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+    currentUrl = tab.url;
+    currentTab = tab.id;
 });
