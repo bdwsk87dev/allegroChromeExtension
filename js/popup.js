@@ -1,7 +1,8 @@
 var popupDownloader = {
     init : function(){
         $("#start").click(function () {
-			chrome.extension.sendRequest({action: "start"}, function () {});
+            let minPrice = $('#min_price').val();
+			chrome.extension.sendRequest({action: "start", minPrice: minPrice}, function () {});
 			//window.close();
 		})
     }

@@ -4,7 +4,17 @@ currentTab = 0;
 function onRequest(request, sender, callback) {
 	if (request.action == "start") {
 		console.log('start button is pressed');
-		chrome.tabs.executeScript(currentTab, {file: 'js/contentscripFindtCategories.js'});
+
+		/** Get min price set by user **/
+		let minPrice = request.minPrice;
+
+		chrome.storage.local.set({
+			minPrice: minPrice
+		}, function () {
+			chrome.tabs.executeScript(currentTab, {file: 'js/contentscripFindtCategories.js'});
+		});
+
+
 		//chrome.tabs.sendMessage(0,{action: 'getSubcategories'}, null);
 		//chrome.tabs.sendMessage(0,{action: 'getProductsOnPage'}, null);
 	}
