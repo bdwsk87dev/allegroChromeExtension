@@ -1,6 +1,9 @@
 let currentTab = 0;
+let currentUrl = '';
 let lastPage = 0;
 let productList = [];
+let currentParsingPage = 0;
+let minPrice = 0;
 
 function logging(message) {
     chrome.runtime.sendMessage({
@@ -16,7 +19,7 @@ function onRequest(request, sender, callback) {
         logging('script started');
 
         /** Get min price set by user **/
-        let minPrice = request.minPrice;
+        minPrice = request.minPrice;
 
         /** log **/
         logging('minPrice is '+ minPrice);
@@ -26,8 +29,21 @@ function onRequest(request, sender, callback) {
     }
 }
 
+function eachPage(){
 
-function parseSinglePage() {
+    /** Increase current product list page **/
+    currentParsingPage++;
+
+    /** Change parsing product list page **/
+    let newUrlTo = currentUrl.substring(currentUrl.search('/?p=/'), currentUrl.length)
+    chrome.tabs.update({ url: newUrlTo + '?p=' + currentParsingPage });
+
+    /** first page **/
+    getProductsLinksOnPage();
+}
+
+
+function getProductsLinksOnPage() {
     /** Get product list by single page **/
     chrome.storage.local.set({
         minPrice: minPrice
@@ -39,12 +55,19 @@ function parseSinglePage() {
 /** Messages **/
 function onMessage(request, sender, callback) {
     switch (request.action) {
-        case "productsList":
-            productList.concat(request.result.products)
-            console.log(productList);
-            break;
         case "lastPage":
             lastPage = request.result.lastPage;
+            eachPage();
+            break;
+        case "productsList":
+            productList.concat(request.result.products);
+            if(currentParsingPage<2){
+                eachPage();
+            }
+            else{
+                console.log(productList);
+            }
+            break;
     }
 }
 
@@ -55,26 +78,8 @@ chrome.runtime.onMessage.addListener(onMessage);
 /** Browser actions **/
 /** On tab activated in browser **/
 chrome.tabs.onActivated.addListener(function (activeInfo) {
-    // get current tab id
     currentTab = activeInfo.tabId;
     chrome.tabs.get(currentTab, function (tab) {
-        currentUrl = tab.url.split('/')[2];
-        currentFullUrl = tab.url;
+        currentUrl = tab.url;
     });
 });
-
-/** On tab updated in browser **/
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    currentUrl = tab.url.split('/')[2];
-    currentFullUrl = tab.url;
-    currentTab = tab.id;
-    chrome.browserAction.setBadgeText({text: localStorage['imageCounter']});
-});
-
-/*
-
-		//chrome.tabs.sendMessage(0,{action: 'getSubcategories'}, null);
-		//chrome.tabs.sendMessage(0,{action: 'getProductsOnPage'}, null);
-
- */
-

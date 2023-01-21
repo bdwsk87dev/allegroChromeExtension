@@ -10,7 +10,7 @@ var lastPageParser = {
         chrome.runtime.sendMessage({
             action: 'lastPage',
             result: {
-                products: lastPageParser.lastPage
+                lastPage: lastPageParser.lastPage
             }
         }, null);
     }
