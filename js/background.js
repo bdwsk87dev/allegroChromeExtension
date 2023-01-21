@@ -15,6 +15,11 @@ function logging(message) {
 /** Request **/
 function onRequest(request, sender, callback) {
     if (request.action == "start") {
+
+        lastPage = 0;
+        productList = [];
+        currentParsingPage = 0;
+
         /** log **/
         logging('script started');
 
