@@ -11,8 +11,10 @@ function onRequest(request, sender, callback) {
 		chrome.storage.local.set({
 			minPrice: minPrice
 		}, function () {
-			chrome.tabs.executeScript(currentTab, {file: 'js/contentscripFindtCategories.js'});
+			chrome.tabs.executeScript(currentTab, {file: 'js/contentscripStart.js'});
 		});
+
+
 
 
 		//chrome.tabs.sendMessage(0,{action: 'getSubcategories'}, null);
@@ -22,7 +24,7 @@ function onRequest(request, sender, callback) {
 
 /** Messages **/
 function onMessage(request, sender, callback) {
-	if (request.action == 'coreParser') {
+	if (request.action == 'productsList') {
 
 		console.log(request.result);
 
