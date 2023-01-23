@@ -35,6 +35,8 @@ function onRequest(request, sender, callback) {
 }
 
 function nextPage(){
+    pauseme(13000);
+
     /** Increase current product list page **/
     currentParsingPage++;
 
@@ -78,7 +80,7 @@ function onMessage(request, sender, callback) {
         case "productsList":
             /** Делаем проверку, на то что страница загрузилась правильно **/
             if(request.result.products.length === 0 && currentParsingPage <= lastPage){
-                pauseme(2000);
+                pauseme(5000);
             }
 
             /** Обновили глобальный массив товаров **/
@@ -88,7 +90,7 @@ function onMessage(request, sender, callback) {
 
             logging('Спарсено товаров : ' + productList.length);
 
-            if(currentParsingPage<1){
+            if(currentParsingPage<3){
                 nextPage();
             }
             else{
@@ -102,7 +104,7 @@ function onMessage(request, sender, callback) {
 /** Ждём некоторое время, делаем так называемую паузу **/
 async function pauseme(time){
     await sleepNow(time);
-    eachPage();
+    nextPage();
 }
 
 const sleepNow = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
