@@ -26,4 +26,3 @@ $(function () {
 	popupDownloader.init();
     chrome.runtime.onMessage.addListener(popupDownloader.onMessage);
 });
-
