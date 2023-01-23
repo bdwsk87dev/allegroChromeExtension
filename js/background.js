@@ -2,7 +2,7 @@ let currentTab = 0;
 let currentUrl = '';
 let lastPage = 0;
 let productList = [];
-let currentParsingPage = 1;
+let currentParsingPage = 0;
 let minPrice = 0;
 
 function logging(message) {
@@ -34,7 +34,10 @@ function onRequest(request, sender, callback) {
     }
 }
 
-function eachPage(){
+function nextPage(){
+    /** Increase current product list page **/
+    currentParsingPage++;
+
 
     /** Change parsing product list page **/
     let newUrlTo = (currentParsingPage>1)?
@@ -61,24 +64,32 @@ function getProductsLinksOnPage() {
     });
 }
 
+function eachProduct(){
+
+}
+
 /** Messages **/
 function onMessage(request, sender, callback) {
     switch (request.action) {
         case "lastPage":
             lastPage = request.result.lastPage;
-            eachPage();
+            nextPage();
             break;
         case "productsList":
-            productList.concat(request.result.products);
+            /** Делаем проверку, на то что страница загрузилась правильно **/
+            if(request.result.products.length === 0 && currentParsingPage <= lastPage){
+                pauseme(2000);
+            }
+
+            /** Обновили глобальный массив товаров **/
+            productList = productList.concat(request.result.products);
             console.log(request.result.products);
             console.log(productList);
+
             logging('Спарсено товаров : ' + productList.length);
 
-            /** Increase current product list page **/
-            currentParsingPage++;
-
-            if(currentParsingPage<=2){
-                eachPage();
+            if(currentParsingPage<1){
+                nextPage();
             }
             else{
                 /** Exit **/
@@ -87,6 +98,14 @@ function onMessage(request, sender, callback) {
             break;
     }
 }
+
+/** Ждём некоторое время, делаем так называемую паузу **/
+async function pauseme(time){
+    await sleepNow(time);
+    eachPage();
+}
+
+const sleepNow = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 /** Register actions **/
 chrome.extension.onRequest.addListener(onRequest);
@@ -106,3 +125,5 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     currentUrl = tab.url;
     currentTab = tab.id;
 });
+
+//const array3 = [...array1, ...array2];

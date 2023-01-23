@@ -17,7 +17,7 @@ var popupDownloader = {
 
     generateCSV: function (){
         $('#logger').html('!!!');
-        fetch('https://allegro.pl/kategoria/iii-rp-1990-5-zl-okolicznosciowe-249502').then(data=>{
+        fetch('https://allegro.pl/oferta/5-zl-2022-r-klasztor-na-swietym-krzyzu-12845605677').then(data=>{
             data.text().then(data => console.log(data));
         })
     }
