@@ -18,7 +18,7 @@ function onRequest(request, sender, callback) {
 
         lastPage = 0;
         productList = [];
-        currentParsingPage = 1;
+        currentParsingPage = 0;
 
         /** log **/
         logging('script started');
@@ -34,23 +34,22 @@ function onRequest(request, sender, callback) {
     }
 }
 
-function nextPage(){
-    pauseme(13000);
+async function nextPage() {
+    await pauseme(1000);
 
     /** Increase current product list page **/
     currentParsingPage++;
 
-
     /** Change parsing product list page **/
-    let newUrlTo = (currentParsingPage>1)?
-        currentUrl.split('?p=')[0]:
+    let newUrlTo = (currentParsingPage > 1) ?
+        currentUrl.split('?p=')[0] :
         currentUrl;
 
     console.log(currentParsingPage);
     console.log(currentUrl);
     console.log(newUrlTo + '?p=' + currentParsingPage);
 
-    chrome.tabs.update({ url: newUrlTo + '?p=' + currentParsingPage });
+    chrome.tabs.update({url: newUrlTo + '?p=' + currentParsingPage});
 
     /** first page **/
     getProductsLinksOnPage();
@@ -71,7 +70,7 @@ function eachProduct(){
 }
 
 /** Messages **/
-function onMessage(request, sender, callback) {
+async function onMessage(request, sender, callback) {
     switch (request.action) {
         case "lastPage":
             lastPage = request.result.lastPage;
@@ -79,8 +78,10 @@ function onMessage(request, sender, callback) {
             break;
         case "productsList":
             /** Делаем проверку, на то что страница загрузилась правильно **/
-            if(request.result.products.length === 0 && currentParsingPage <= lastPage){
-                pauseme(5000);
+            if (request.result.products.length === 0 && currentParsingPage <= lastPage) {
+                await pauseme(5000);
+                currentParsingPage--;
+                nextPage();
             }
 
             /** Обновили глобальный массив товаров **/
@@ -90,10 +91,9 @@ function onMessage(request, sender, callback) {
 
             logging('Спарсено товаров : ' + productList.length);
 
-            if(currentParsingPage<3){
+            if (currentParsingPage < 3) {
                 nextPage();
-            }
-            else{
+            } else {
                 /** Exit **/
                 console.log(productList);
             }
@@ -104,7 +104,6 @@ function onMessage(request, sender, callback) {
 /** Ждём некоторое время, делаем так называемую паузу **/
 async function pauseme(time){
     await sleepNow(time);
-    nextPage();
 }
 
 const sleepNow = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
