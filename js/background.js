@@ -74,6 +74,7 @@ function onMessage(request, sender, callback) {
             break;
         case "productsList":
             productList.concat(request.result.products);
+            console.log(request.result.products);
             if(currentParsingPage<2){
                 eachPage();
             }
