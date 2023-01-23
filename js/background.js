@@ -2,7 +2,7 @@ let currentTab = 0;
 let currentUrl = '';
 let lastPage = 0;
 let productList = [];
-let currentParsingPage = 0;
+let currentParsingPage = 1;
 let minPrice = 0;
 
 function logging(message) {
@@ -14,11 +14,11 @@ function logging(message) {
 
 /** Request **/
 function onRequest(request, sender, callback) {
-    if (request.action == "start") {
+    if (request.action === "start") {
 
         lastPage = 0;
         productList = [];
-        currentParsingPage = 0;
+        currentParsingPage = 1;
 
         /** log **/
         logging('script started');
@@ -36,9 +36,6 @@ function onRequest(request, sender, callback) {
 
 function eachPage(){
 
-    /** Increase current product list page **/
-    currentParsingPage++;
-
     /** Change parsing product list page **/
     let newUrlTo = (currentParsingPage>1)?
         currentUrl.split('?p=')[0]:
@@ -54,7 +51,6 @@ function eachPage(){
     getProductsLinksOnPage();
 
 }
-
 
 function getProductsLinksOnPage() {
     /** Get product list by single page **/
@@ -75,10 +71,17 @@ function onMessage(request, sender, callback) {
         case "productsList":
             productList.concat(request.result.products);
             console.log(request.result.products);
-            if(currentParsingPage<2){
+            console.log(productList);
+            logging('Спарсено товаров : ' + productList.length);
+
+            /** Increase current product list page **/
+            currentParsingPage++;
+
+            if(currentParsingPage<=2){
                 eachPage();
             }
             else{
+                /** Exit **/
                 console.log(productList);
             }
             break;
