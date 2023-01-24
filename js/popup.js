@@ -5,23 +5,36 @@ var popupDownloader = {
 			chrome.extension.sendRequest({action: "start", minPrice: minPrice}, function () {});
 			//window.close();
 		})
-        $("#generateCSV").click(()=>{
-            popupDownloader.generateCSV();
+
+        /** Testing button !! **/
+        $("#export").click(()=>{
+            popupDownloader.exportExcel();
         });
     },
     onMessage: function (request, sender, callback){
         if (request.action === "logging"){
             $('#logger').html($('#logger').html() + "<br>" + request.message);
         }
+        if (request.action === "excelData"){
+            popupDownloader.exportExcel(request.message);
+        } 
     },
 
-    generateCSV: function (){
-        $('#logger').html('!!!');
-        fetch('https://allegro.pl/oferta/5-zl-2022-r-klasztor-na-swietym-krzyzu-12845605677').then(data=>{
-            data.text().then(data => console.log(data));
-        })
+    exportExcel: function (products){
+
+        products.forEach(product=>{
+            $('#basic_table tbody').append('<tr><td>'+product.url+'</td></tr>')
+        });
+
+        let excel = new ExcelGen({
+            "src_id": "basic_table",
+            "show_header": true,
+            "type": "table"
+        });
+        excel.generate();
     }
 }
+
 $(function () {
 	popupDownloader.init();
     chrome.runtime.onMessage.addListener(popupDownloader.onMessage);

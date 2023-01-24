@@ -5,26 +5,87 @@
     <script src="js/jquery-1.8.0.min.js" type="text/javascript"></script>
     <script src="js/default.js" type="text/javascript"></script>
     <script src="js/popup.js"></script>
+
+    <!-- excel -->
+    <script type="text/javascript" src="js/modules/jszip.js"></script>
+    <script type="text/javascript" src="js/modules/FileSaver.js"></script>
+    <script type="text/javascript" src="js/modules/excel-gen.js"></script>
+
     <title></title>
     <style>
-        .logger{
-            padding:10px;
-            width:400px;
-            height:200px;
-            overflow:scroll;
+        .logger {
+            padding: 10px;
+            width: 400px;
+            height: 200px;
+            overflow: scroll;
         }
     </style>
 </head>
 <body>
 
 
-<label for = "min_price">Мін ціна : </label>
+<label for="min_price">Мін ціна : </label>
 <input type="text" id="min_price" placeholder="40">
 <br>
 <br>
 <button id="start">Start parsing!</button>
-<button id="generateCSV">Generate CSV</button>
+<button id="export">Export Excel</button>
 <div class='logger' id="logger">logger...</div>
+
+<table id="basic_table" style="border-collapse: collapse; display: none;">
+    <thead>
+    <tr>
+        <th>
+            Rank
+        </th>
+        <th>
+            Name
+        </th>
+        <th>
+            City
+        </th>
+        <th>
+            State
+        </th>
+        <th>
+            Section
+        </th>
+        <th>
+            District
+        </th>
+        <th>
+            Points
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <span>1</span>
+        </td>
+        <td>
+            <span>Small, Steve </span>
+        </td>
+        <td>
+            <span>New York</span>
+        </td>
+        <td>
+            <span>NY</span>
+        </td>
+        <td>
+            <span>Eastern</span>
+        </td>
+        <td>
+            <span>Metropolitan Region</span>
+        </td>
+        <td>
+            <span>378</span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
 </body>
 </html>
 

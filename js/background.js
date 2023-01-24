@@ -53,11 +53,10 @@ async function nextPage() {
 
     /** first page **/
     getProductsLinksOnPage();
-
 }
 
+/** Get product list by single page **/
 function getProductsLinksOnPage() {
-    /** Get product list by single page **/
     chrome.storage.local.set({
         minPrice: minPrice
     }, function () {
@@ -91,14 +90,23 @@ async function onMessage(request, sender, callback) {
 
             logging('Спарсено товаров : ' + productList.length);
 
-            if (currentParsingPage < 3) {
+            if (currentParsingPage < 1) {
                 nextPage();
             } else {
                 /** Exit **/
                 console.log(productList);
+                returnAndexportToExcel();
             }
             break;
     }
+}
+
+/** Final method. Return parsed products to popup.js for export to excel **/
+function returnAndexportToExcel(){
+    chrome.runtime.sendMessage({
+        action: 'excelData',
+        message: productList
+    }, null);
 }
 
 /** Ждём некоторое время, делаем так называемую паузу **/
