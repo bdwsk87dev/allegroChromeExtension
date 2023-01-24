@@ -95,6 +95,9 @@ async function onMessage(request, sender, callback) {
             } else {
                 /** Exit **/
                 console.log(productList);
+
+
+
                 returnAndexportToExcel();
             }
             break;

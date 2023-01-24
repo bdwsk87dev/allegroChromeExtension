@@ -17,7 +17,7 @@ var popupDownloader = {
         }
         if (request.action === "excelData"){
             popupDownloader.exportExcel(request.message);
-        } 
+        }
     },
 
     exportExcel: function (products){
