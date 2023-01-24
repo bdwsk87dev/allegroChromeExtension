@@ -13,7 +13,7 @@ var coreParser = {
     parseData: function () {
         let items = document.querySelectorAll('div.opbox-listing article div div div:first-child a:first-child');
         items.forEach(item => {
-            coreParser.products.push({'url': item.getAttribute('href') + coreParser.minPrice});
+            coreParser.products.push({'url': item.getAttribute('href')});
         });
         coreParser.sendData();
     },

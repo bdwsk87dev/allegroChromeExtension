@@ -3,6 +3,7 @@ let currentUrl = '';
 let lastPage = 0;
 let productList = [];
 let currentParsingPage = 0;
+let currentParsingProduct = 0;
 let minPrice = 0;
 /** Waiting timers values **/
 let nexPageMS = 1000;
@@ -23,7 +24,9 @@ function onRequest(request, sender, callback) {
         lastPage = 0;
         productList = [];
         currentParsingPage = 0;
+        currentParsingProduct = 0;
 
+        /** Get timer interval parameters **/
         nexPageMS = request.nexPageMS;
         nextProductMS = request.nextProductMS;
         reload403MS = request.reload403MS;
@@ -43,7 +46,7 @@ function onRequest(request, sender, callback) {
 }
 
 async function nextPage() {
-    await pauseme(1000);
+    await pauseme(nexPageMS);
 
     /** Increase current product list page **/
     currentParsingPage++;
@@ -53,8 +56,8 @@ async function nextPage() {
         currentUrl.split('?p=')[0] :
         currentUrl;
 
-    console.log(currentParsingPage);
-    console.log(currentUrl);
+    console.log('currentParsingPage : ' + currentParsingPage);
+    console.log('currentUrl : ' + currentUrl);
     console.log(newUrlTo + '?p=' + currentParsingPage);
 
     chrome.tabs.update({url: newUrlTo + '?p=' + currentParsingPage});
@@ -72,10 +75,6 @@ function getProductsLinksOnPage() {
     });
 }
 
-function eachProduct(){
-
-}
-
 /** Messages **/
 async function onMessage(request, sender, callback) {
     switch (request.action) {
@@ -86,7 +85,7 @@ async function onMessage(request, sender, callback) {
         case "productsList":
             /** Делаем проверку, на то что страница загрузилась правильно **/
             if (request.result.products.length === 0 && currentParsingPage <= lastPage) {
-                await pauseme(5000);
+                await pauseme(reload403MS);
                 currentParsingPage--;
                 nextPage();
             }
@@ -96,20 +95,39 @@ async function onMessage(request, sender, callback) {
             console.log(request.result.products);
             console.log(productList);
 
-            logging('Спарсено товаров : ' + productList.length);
+            logging('Знайдено товарiв : ' + productList.length);
 
             if (currentParsingPage < 1) {
                 nextPage();
             } else {
                 /** Exit **/
                 console.log(productList);
-
-
-
+                nextProcut();
                 returnAndexportToExcel();
             }
             break;
     }
+}
+
+async function nextProcut() {
+    await pauseme(nextProductMS);
+
+    /** Increase current product list page **/
+    currentParsingProduct++;
+
+    let productUrl = productList[currentParsingProduct].url;
+
+    logging('Next product url : ' + productUrl);
+    console.log('currentParsingProduct : ' + currentParsingProduct);
+    console.log('currentUrl :' + currentUrl);
+
+    chrome.tabs.update({url: productUrl});
+
+    getProductInfo();
+}
+
+function getProductInfo(){
+    chrome.tabs.executeScript(currentTab, {file: 'js/productParser.js'});
 }
 
 /** Final method. Return parsed products to popup.js for export to excel **/
@@ -146,7 +164,8 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     currentTab = tab.id;
 });
 
-//const array3 = [...array1, ...array2];
+/** How **/
 
+//const array3 = [...array1, ...array2];
 // Last version dktp
 // https://allegro.pl/uzytkownik/Grand_Trade
