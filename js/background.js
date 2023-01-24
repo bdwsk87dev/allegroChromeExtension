@@ -141,3 +141,4 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 //const array3 = [...array1, ...array2];
 
 // Last version dktp
+// https://allegro.pl/uzytkownik/Grand_Trade
