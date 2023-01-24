@@ -139,3 +139,5 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 });
 
 //const array3 = [...array1, ...array2];
+
+// Last version dktp
