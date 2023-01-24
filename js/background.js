@@ -6,7 +6,7 @@ let currentParsingPage = 0;
 let minPrice = 0;
 /** Waiting timers values **/
 let nexPageMS = 1000;
-let nextProcutMS = 1000;
+let nextProductMS = 1000;
 let reload403MS = 5000;
 
 function logging(message) {
@@ -23,6 +23,10 @@ function onRequest(request, sender, callback) {
         lastPage = 0;
         productList = [];
         currentParsingPage = 0;
+
+        nexPageMS = request.nexPageMS;
+        nextProductMS = request.nextProductMS;
+        reload403MS = request.reload403MS;
 
         /** log **/
         logging('script started');
