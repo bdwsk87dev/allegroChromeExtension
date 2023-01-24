@@ -4,6 +4,10 @@ let lastPage = 0;
 let productList = [];
 let currentParsingPage = 0;
 let minPrice = 0;
+/** Waiting timers values **/
+let nexPageMS = 1000;
+let nextProcutMS = 1000;
+let reload403MS = 5000;
 
 function logging(message) {
     chrome.runtime.sendMessage({

@@ -19,19 +19,40 @@
             height: 200px;
             overflow: scroll;
         }
+        table.settings input{
+            height:20px;
+            padding: 5px;
+
+        }
     </style>
 </head>
 <body>
 
-
-<label for="min_price">Мін ціна : </label>
-<input type="text" id="min_price" placeholder="40">
+<table class="settings">
+    <tbody>
+    <tr>
+        <td>Мін ціна :</td>
+        <td><input type="number" id="min_price" placeholder="40" value="40" min="0" max="9999" step="100"></td>
+    </tr>
+    <tr>
+        <td>Iнтервал часу для наступноі сторінки списку товарів : </td>
+        <td><input type="number" id="nexPageMS" placeholder="1000" value="1000" min="1000" step="100"></td>
+    </tr>
+    <tr>
+        <td>Iнтервал часу для наступного товару:</td>
+        <td><input type="number" id="nextProcutMS" placeholder="1000" value="1000" min="1000" step="100"></td>
+    </tr>
+    <tr>
+        <td>Iнтервал часу у разі помилки 403 : </td>
+        <td><input type="number" id="reload403MS" placeholder="5000" value="5000" min="1000" step="100"></td>
+    </tr>
+    </tbody>
+</table>
 <br>
 <br>
 <button id="start">Start parsing!</button>
 <button id="export">Export Excel</button>
 <div class='logger' id="logger">logger...</div>
-
 <table id="basic_table" style="border-collapse: collapse; display: none;">
     <thead>
     <tr>
@@ -84,22 +105,5 @@
     </tr>
     </tbody>
 </table>
-
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
