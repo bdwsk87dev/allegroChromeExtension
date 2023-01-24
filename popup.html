@@ -14,7 +14,7 @@
     <title></title>
     <style>
         .logger {
-            padding: 10px;
+            border: 1px solid #5f4646;
             width: 400px;
             height: 200px;
             overflow: scroll;
@@ -22,11 +22,16 @@
         table.settings input{
             height:20px;
             padding: 5px;
-
         }
     </style>
 </head>
 <body>
+
+<h2>Управління</h2>
+<button id="start">Запуск парсера</button>
+<button id="export">Export Excel (Debug only!)</button>
+
+<h2>Налаштування</h2>
 
 <table class="settings">
     <tbody>
@@ -48,11 +53,13 @@
     </tr>
     </tbody>
 </table>
-<br>
-<br>
-<button id="start">Start parsing!</button>
-<button id="export">Export Excel</button>
+
+<h2>Логи</h2>
+
 <div class='logger' id="logger">logger...</div>
+
+
+
 <table id="basic_table" style="border-collapse: collapse; display: none;">
     <thead>
     <tr>
