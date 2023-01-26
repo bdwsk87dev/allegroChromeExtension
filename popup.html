@@ -23,32 +23,66 @@
             height:20px;
             padding: 5px;
         }
+        .leftLine{
+            border-left: 2px solid #9A9FD3B7;
+            padding-left: 5px;
+            margin-left: 14px;
+        }
+        .settings td:first-child{
+            width:75%;
+        }
+        .settings td:last-child{
+            text-align: right;
+        }
+        .settings td:last-child input{
+            width:100px;
+        }
+        h2 {
+            background-color: #9A9FD3B7;
+            padding: 6px;
+        }
     </style>
 </head>
 <body>
 
 <h2>Управління</h2>
-<button id="start">Запуск парсера</button>
-<button id="export">Export Excel (Debug only!)</button>
 
-<h2>Налаштування</h2>
-
-<table class="settings">
+<table class="leftLine">
     <tbody>
     <tr>
-        <td>Мін ціна :</td>
+        <td><button id="start">Запуск парсера</button></td>
+        <td><button id="export">Зупинити парсер</button></td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Налаштування :</h2>
+
+<h3>Пошук :</h3>
+
+<table class="settings leftLine">
+    <tbody>
+    <tr>
+        <td>Мін ціна (zł) :</td>
         <td><input type="number" id="minPrice" placeholder="40" value="40" min="0" max="9999" step="100"></td>
     </tr>
+    </tbody>
+</table>
+
+<h3>Iнтервал часу (мінімум 1000) :</h3>
+
+<table class="settings leftLine">
+    <tbody>
     <tr>
-        <td>Iнтервал часу для наступноі сторінки списку товарів : </td>
+        <td>Наступна сторінка списка товарів : </td>
         <td><input type="number" id="nexPageMS" placeholder="1000" value="1000" min="1000" step="100"></td>
     </tr>
     <tr>
-        <td>Iнтервал часу для наступного товару:</td>
+        <td>Наступний товар :</td>
         <td><input type="number" id="nextProductMS" placeholder="1000" value="1000" min="1000" step="100"></td>
     </tr>
     <tr>
-        <td>Iнтервал часу у разі помилки 403 : </td>
+        <td>У разі помилки : </td>
         <td><input type="number" id="reload403MS" placeholder="5000" value="5000" min="1000" step="100"></td>
     </tr>
     </tbody>
@@ -57,8 +91,6 @@
 <h2>Логи</h2>
 
 <div class='logger' id="logger">logger...</div>
-
-
 
 <table id="basic_table" style="border-collapse: collapse; display: none;">
     <thead>
