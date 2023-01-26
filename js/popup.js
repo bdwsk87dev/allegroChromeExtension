@@ -6,6 +6,12 @@ var popupDownloader = {
 
         /** Click start parsing button **/
         $("#start").click(function () {
+
+            /** clear the intermediate table, which is used for export to excel **/
+            $('#basic_table tbody').remove();
+            $('#basic_table').append('<tbody></tbody>')
+
+            /** send start request for parsing to background.js **/
             chrome.extension.sendRequest({
                 action: "start",
                 minPrice: $('#minPrice').val(),
