@@ -19,24 +19,30 @@
             height: 200px;
             overflow: scroll;
         }
-        table.settings input{
-            height:20px;
+
+        table.settings input {
+            height: 20px;
             padding: 5px;
         }
-        .leftLine{
+
+        .leftLine {
             border-left: 2px solid #9A9FD3B7;
             padding-left: 5px;
             margin-left: 14px;
         }
-        .settings td:first-child{
-            width:75%;
+
+        .settings td:first-child {
+            width: 75%;
         }
-        .settings td:last-child{
+
+        .settings td:last-child {
             text-align: right;
         }
-        .settings td:last-child input{
-            width:100px;
+
+        .settings td:last-child input {
+            width: 100px;
         }
+
         h2 {
             background-color: #9A9FD3B7;
             padding: 6px;
@@ -50,8 +56,12 @@
 <table class="leftLine">
     <tbody>
     <tr>
-        <td><button id="start">Запуск парсера</button></td>
-        <td><button id="export">Зупинити парсер</button></td>
+        <td>
+            <button id="start">Запуск парсера</button>
+        </td>
+        <td>
+            <button id="export">Зупинити парсер</button>
+        </td>
     </tr>
     </tbody>
 </table>
@@ -66,6 +76,10 @@
         <td>Мін ціна (zł) :</td>
         <td><input type="number" id="minPrice" placeholder="40" value="40" min="0" max="9999" step="100"></td>
     </tr>
+    <tr>
+        <td>Товарів на файл (max = 300) :</td>
+        <td><input type="number" id="prodPerFile" placeholder="40" value="200" min="5" max="300" step="5"></td>
+    </tr>
     </tbody>
 </table>
 
@@ -74,7 +88,7 @@
 <table class="settings leftLine">
     <tbody>
     <tr>
-        <td>Наступна сторінка списка товарів : </td>
+        <td>Наступна сторінка списка товарів :</td>
         <td><input type="number" id="nexPageMS" placeholder="1000" value="1000" min="1000" step="100"></td>
     </tr>
     <tr>
@@ -82,7 +96,7 @@
         <td><input type="number" id="nextProductMS" placeholder="1000" value="1000" min="1000" step="100"></td>
     </tr>
     <tr>
-        <td>У разі помилки : </td>
+        <td>У разі помилки :</td>
         <td><input type="number" id="reload403MS" placeholder="5000" value="5000" min="1000" step="100"></td>
     </tr>
     </tbody>
