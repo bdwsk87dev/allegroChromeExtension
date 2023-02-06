@@ -36,9 +36,24 @@ var popupDownloader = {
     },
 
     exportExcel: function (products) {
-
+        /** Create excel data */
         products.forEach(product => {
-            $('#basic_table tbody').append('<tr><td>' + product.url + '</td></tr>')
+
+            /** Prepare images */
+            let imagesText = '';
+
+            product.allImages.forEach(image => {
+                imagesText += image + "<br>";
+            })
+
+
+            $('#basic_table tbody').append('<tr>' +
+                '<td>' + product.productName + '</td>' +
+                '<td>' + product.category + '</td>' +
+                '<td>' + product.desc + '</td>' +
+                '<td>' + product.price + '</td>' +
+                '<td>' + product.imagesText + '</td>' +
+                '</tr>')
         });
 
         let excel = new ExcelGen({

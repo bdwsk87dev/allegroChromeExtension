@@ -14,10 +14,10 @@
 			"css": [
 			],
 			"js": [
-				"js/default.js",
-				"js/jquery-1.8.0.min.js"
+				"js/jquery-1.8.0.min.js",
+				"js/default.js"
 			],
-			"run_at": "document_start"
+			"run_at": "document_end"
 		}
 	],
 	"permissions": [
