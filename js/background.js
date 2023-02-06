@@ -17,6 +17,7 @@ function logging(message) {
         action: 'logging',
         message: message
     }, null);
+    console.log(message);
 }
 
 /** Request **/
@@ -98,26 +99,21 @@ async function onMessage(request, sender, callback) {
             console.log(request.result.products);
             console.log(productList);
 
-            logging('Знайдено товарiв : ' + productList.length);
+            logging('Знайдено товарiв на данний момент ( сторінці ): ' + productList.length);
 
             /** Если прошли все страницы списков товаров */
             if (currentParsingPage < 1) {
-
                 nextPage();
             } else {
                 /** Exit from here and start parsing products **/
                 console.log(productList);
-
                 nextProcut();
                 //returnAndexportToExcel();
             }
             break;
         case "productsReady":
-
             console.log("==>"+currentParsingProduct);
-
             productListResult = productListResult.concat(request.result.productdata);
-
             if (currentParsingProduct < 1) {
                 nextProcut();
             }
@@ -136,16 +132,13 @@ async function nextProcut() {
 
     /** Получаем url текущего оофера */
 
-    let productUrl = productList[currentParsingProduct].url;
+    let productUrl = productList[currentParsingProduct-1].url;
 
-    console.log('Next product url : ' + productUrl);
-    logging('Next product url : ' + productUrl);
-
-    console.log('currentParsingProduct : ' + currentParsingProduct);
-    logging('currentParsingProduct : ' + currentParsingProduct);
-
-    console.log('currentUrl :' + currentUrl);
-    logging('currentUrl :' + currentUrl);
+    /** Logging */
+    logging('***');
+    logging('Номер офферу: [ ' + currentParsingProduct + ' ]');
+    logging('Парсинг офферу (url):');
+    logging(productUrl);
 
     chrome.tabs.update({url: productUrl});
     chrome.tabs.onUpdated.addListener( function (tabid, changeInfo, tab) {
