@@ -6,6 +6,7 @@ let productListResult = [];
 let currentParsingPage = 0;
 let currentParsingProduct = 0;
 let minPrice = 0;
+let prodPerFile = 0;
 /** Waiting timers values **/
 let nexPageMS = 1000;
 let nextProductMS = 1000;
@@ -40,6 +41,9 @@ function onRequest(request, sender, callback) {
 
         /** Get min price set by user **/
         minPrice = request.minPrice;
+
+        /** Get prod per file */
+        prodPerFile = request.prodPerFile;
 
         /** log **/
         logging('Обрана мінімальна ціна : '+ minPrice);
@@ -84,14 +88,14 @@ async function onMessage(request, sender, callback) {
     switch (request.action) {
         case "lastPage":
             lastPage = request.result.lastPage;
-            nextPage();
+            await nextPage();
             break;
         case "productsList":
             /** Делаем проверку, на то что страница загрузилась правильно **/
             if (request.result.products.length === 0 && currentParsingPage <= lastPage) {
                 await pauseme(reload403MS);
                 currentParsingPage--;
-                nextPage();
+                await nextPage();
             }
 
             /** Обновили глобальный массив товаров **/
@@ -99,39 +103,39 @@ async function onMessage(request, sender, callback) {
             console.log(request.result.products);
             console.log(productList);
 
-            logging('Знайдено товарiв на данний момент ( сторінці ): ' + productList.length);
+            logging('Знайдено товарiв на данний момент всього: ' + productList.length);
 
             /** Если прошли все страницы списков товаров */
             if (currentParsingPage < 1) {
-                nextPage();
+                await nextPage();
             } else {
                 /** Exit from here and start parsing products **/
                 console.log(productList);
-                nextProcut();
-                //returnAndexportToExcel();
+                await nextProduct();
             }
             break;
         case "productsReady":
-            console.log("==>"+currentParsingProduct);
             productListResult = productListResult.concat(request.result.productdata);
             if (currentParsingProduct < 1) {
-                nextProcut();
+                if (currentParsingProduct >= prodPerFile){
+                    exportToExcel();
+                }
+                await nextProduct();
             }
             else{
-                returnAndexportToExcel();
+                exportToExcel();
             }
             break;
     }
 }
 
-async function nextProcut() {
+async function nextProduct() {
     await pauseme(nextProductMS);
 
     /** Increase current product list page **/
     currentParsingProduct++;
 
     /** Получаем url текущего оофера */
-
     let productUrl = productList[currentParsingProduct-1].url;
 
     /** Logging */
@@ -153,7 +157,6 @@ async function nextProcut() {
                 }
             }
     })
-    //getProductInfo();
 }
 
 function getProductInfo(){
@@ -161,7 +164,7 @@ function getProductInfo(){
 }
 
 /** Final method. Return parsed products to popup.js for export to excel **/
-function returnAndexportToExcel(){
+function exportToExcel(){
     chrome.runtime.sendMessage({
         action: 'excelData',
         message: productListResult

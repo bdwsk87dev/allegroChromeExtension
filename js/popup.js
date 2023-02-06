@@ -18,7 +18,8 @@ var popupDownloader = {
                 minPrice: $('#minPrice').val(),
                 nexPageMS: $('#nexPageMS').val(),
                 nextProductMS: $('#nextProductMS').val(),
-                reload403MS: $('#reload403MS').val()
+                reload403MS: $('#reload403MS').val(),
+                prodPerFile: $('#prodPerFile').val()
             });
         })
 
@@ -53,8 +54,8 @@ var popupDownloader = {
 
             /** Exporting buffer table */
             $('#basic_table tbody').append('<tr>' +
-                '<td width="20">' + product.productName + '</td>' +
-                '<td width="20">' + product.category + '</td>' +
+                '<td>' + product.productName + '</td>' +
+                '<td>' + product.category + '</td>' +
                 '<td>' + product.desc + '</td>' +
                 '<td>' + product.price + '</td>' +
                 '<td>' + imagesText + '</td>' +
