@@ -35,13 +35,13 @@ function onRequest(request, sender, callback) {
         reload403MS = request.reload403MS;
 
         /** log **/
-        logging('script started');
+        logging('Запуск парсера...');
 
         /** Get min price set by user **/
         minPrice = request.minPrice;
 
         /** log **/
-        logging('minPrice is '+ minPrice);
+        logging('Обрана мінімальна ціна : '+ minPrice);
 
         /** Get last product page **/
         chrome.tabs.executeScript(currentTab, {file: 'js/getLastPage.js'});
@@ -116,11 +116,9 @@ async function onMessage(request, sender, callback) {
 
             console.log("==>"+currentParsingProduct);
 
-           // productListResult.push(request.result.productdata) ;
-
             productListResult = productListResult.concat(request.result.productdata);
 
-            if (currentParsingProduct < 4) {
+            if (currentParsingProduct < 1) {
                 nextProcut();
             }
             else{

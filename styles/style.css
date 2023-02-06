@@ -1,0 +1,61 @@
+body {
+    width: 750px;
+}
+
+.logger {
+    border: 1px solid #000000;
+    width: 737px;
+    height: 195px;
+    overflow: scroll;
+    padding: 5px;
+}
+
+table.settings input {
+    height: 20px;
+    padding: 5px;
+}
+
+.leftLine {
+    border-left: 2px solid #9A9FD3B7;
+    padding-left: 5px;
+    margin-left: 14px;
+}
+
+.settings td:first-child {
+    width: 75%;
+}
+
+.settings td:last-child {
+    text-align: right;
+}
+
+.settings td:last-child input {
+    width: 100px;
+}
+
+h2 {
+    background-color: #44566ab7;
+    padding: 4px;
+    color: white;
+    border-radius: 3px;
+}
+
+.button{
+    padding: 10px;
+    cursor: pointer;
+}
+
+.settings_block_main{
+    display: flex;
+}
+
+.settings_block_main{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+
+}
+.settings_block{
+    flex: 1 1 auto;
+    padding-right:20px;
+}

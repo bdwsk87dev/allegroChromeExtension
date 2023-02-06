@@ -1,6 +1,7 @@
 var popupDownloader = {
-    init: function () {
 
+    /** Main method */
+    init: function () {
         /** Min value for the settigns **/
         popupDownloader.inputValueFixes();
 
@@ -26,6 +27,8 @@ var popupDownloader = {
             popupDownloader.exportExcel();
         });
     },
+
+    /** Listener for actions */
     onMessage: function (request, sender, callback) {
         if (request.action === "logging") {
             $('#logger').html($('#logger').html() + "<br>" + request.message);
@@ -35,6 +38,7 @@ var popupDownloader = {
         }
     },
 
+    /** Export to excel function */
     exportExcel: function (products) {
         /** Create excel data */
         products.forEach(product => {
@@ -46,7 +50,7 @@ var popupDownloader = {
                 imagesText += image + "<br>";
             })
 
-
+            /** Exporting buffer table */
             $('#basic_table tbody').append('<tr>' +
                 '<td>' + product.productName + '</td>' +
                 '<td>' + product.category + '</td>' +
@@ -66,7 +70,6 @@ var popupDownloader = {
 
     /** Min value for the settigns **/
     inputValueFixes: function () {
-
         $('#minPrice').change(function () {
             if ($(this).val() < 0) $(this).val(0);
         })
@@ -79,7 +82,6 @@ var popupDownloader = {
         $('#reload403MS').change(function () {
             if ($(this).val() < 1000) $(this).val(1000);
         })
-
     }
 }
 
@@ -87,6 +89,3 @@ $(function () {
     popupDownloader.init();
     chrome.runtime.onMessage.addListener(popupDownloader.onMessage);
 });
-
-/** HOW to close window**/
-//window.close();
