@@ -13,6 +13,10 @@
 
     <title></title>
     <style>
+        body {
+            width: 750px;
+        }
+
         .logger {
             border: 1px solid #5f4646;
             width: 400px;
@@ -47,6 +51,23 @@
             background-color: #9A9FD3B7;
             padding: 6px;
         }
+
+        .settings_block_main{
+            display: flex;
+        }
+
+        .settings_block_main{
+            display: flex;
+        flex-wrap: nowrap;
+            flex-direction: row;
+
+        }
+        .settings_block{
+            flex: 1 1 auto;
+            padding-right:20px;
+        }
+
+
     </style>
 </head>
 <body>
@@ -68,39 +89,51 @@
 
 <h2>Налаштування :</h2>
 
-<h3>Пошук :</h3>
 
-<table class="settings leftLine">
-    <tbody>
-    <tr>
-        <td>Мін ціна (zł) :</td>
-        <td><input type="number" id="minPrice" placeholder="40" value="40" min="0" max="9999" step="100"></td>
-    </tr>
-    <tr>
-        <td>Товарів на файл (max = 300) :</td>
-        <td><input type="number" id="prodPerFile" placeholder="40" value="200" min="5" max="300" step="5"></td>
-    </tr>
-    </tbody>
-</table>
+<div class="settings_block_main">
+    <div class="settings_block">
 
-<h3>Iнтервал часу (мінімум 1000) :</h3>
+        <h3>Iнтервал часу (мінімум 1000) :</h3>
 
-<table class="settings leftLine">
-    <tbody>
-    <tr>
-        <td>Наступна сторінка списка товарів :</td>
-        <td><input type="number" id="nexPageMS" placeholder="1000" value="1000" min="1000" step="100"></td>
-    </tr>
-    <tr>
-        <td>Наступний товар :</td>
-        <td><input type="number" id="nextProductMS" placeholder="1000" value="1000" min="1000" step="100"></td>
-    </tr>
-    <tr>
-        <td>У разі помилки :</td>
-        <td><input type="number" id="reload403MS" placeholder="5000" value="5000" min="1000" step="100"></td>
-    </tr>
-    </tbody>
-</table>
+        <table class="settings leftLine">
+            <tbody>
+            <tr>
+                <td>Наступна сторінка списка товарів :</td>
+                <td><input type="number" id="nexPageMS" placeholder="1000" value="1000" min="1000" step="100"></td>
+            </tr>
+            <tr>
+                <td>Наступний товар :</td>
+                <td><input type="number" id="nextProductMS" placeholder="1000" value="1000" min="1000" step="100"></td>
+            </tr>
+            <tr>
+                <td>У разі помилки :</td>
+                <td><input type="number" id="reload403MS" placeholder="5000" value="5000" min="1000" step="100"></td>
+            </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+    <div class="settings_block">
+
+
+        <h3>Парсер :</h3>
+
+        <table class="settings leftLine">
+            <tbody>
+            <tr>
+                <td>Мін ціна (zł) :</td>
+                <td><input type="number" id="minPrice" placeholder="40" value="40" min="0" max="9999" step="100"></td>
+            </tr>
+            <tr>
+                <td>Товарів на файл (max = 300) :</td>
+                <td><input type="number" id="prodPerFile" placeholder="40" value="200" min="5" max="300" step="5"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
 
 <h2>Логи</h2>
 
