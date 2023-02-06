@@ -47,16 +47,17 @@ var popupDownloader = {
             let imagesText = '';
 
             product.allImages.forEach(image => {
-                imagesText += image + "<br>";
+                imagesText += image + ",";
             })
+            imagesText = imagesText.slice(0, -1);
 
             /** Exporting buffer table */
             $('#basic_table tbody').append('<tr>' +
-                '<td>' + product.productName + '</td>' +
-                '<td>' + product.category + '</td>' +
+                '<td width="20">' + product.productName + '</td>' +
+                '<td width="20">' + product.category + '</td>' +
                 '<td>' + product.desc + '</td>' +
                 '<td>' + product.price + '</td>' +
-                '<td>' + product.imagesText + '</td>' +
+                '<td>' + imagesText + '</td>' +
                 '</tr>')
         });
 
