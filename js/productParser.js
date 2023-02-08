@@ -71,43 +71,6 @@ var productParser = {
             }
         });
     }
-
-
-
-    // smoothScroll: function (elem, offset = 0) {
-    //
-    //     height = document.body.scrollHeight;
-    //     window.scrollTo(0, height);
-    //
-    //     const rect = elem.getBoundingClientRect();
-    //     let targetPosition = Math.floor(rect.top + self.pageYOffset + offset);
-    //     window.scrollTo({
-    //         top: targetPosition,
-    //         behavior: 'smooth'
-    //     });
-    //
-    //     return new Promise((resolve, reject) => {
-    //         const failed = setTimeout(() => {
-    //             reject();
-    //         }, 2000);
-    //
-    //         const scrollHandler = () => {
-    //             if (self.pageYOffset === targetPosition) {
-    //                 window.removeEventListener("scroll", scrollHandler);
-    //                 clearTimeout(failed);
-    //                 resolve();
-    //             }
-    //         };
-    //         if (self.pageYOffset === targetPosition) {
-    //             clearTimeout(failed);
-    //             resolve();
-    //         } else {
-    //             window.addEventListener("scroll", scrollHandler);
-    //             elem.getBoundingClientRect();
-    //         }
-    //     });
-    // }
-
 }
 
 $(function () {
