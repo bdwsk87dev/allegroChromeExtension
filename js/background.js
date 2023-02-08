@@ -116,7 +116,7 @@ async function onMessage(request, sender, callback) {
             break;
         case "productsReady":
             productListResult = productListResult.concat(request.result.productdata);
-            if (currentParsingProduct < 1) {
+            if (currentParsingProduct < 6) {
                 if (currentParsingProduct >= prodPerFile){
                     exportToExcel();
                 }
