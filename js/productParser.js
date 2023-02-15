@@ -13,7 +13,7 @@ var productParser = {
         /** let productName = document.getElementsByTagName('h4')[0].innerHTML; **/
         let productName = document.querySelector('meta[itemProp="name"]').getAttribute('content');
 
-        /** Ged description */
+        /** Get description */
         let description = document.querySelector('div[data-box-name="Description card"]').innerHTML;
 
         /** Get offer price */
@@ -24,6 +24,9 @@ var productParser = {
 
         /** Get sku */
         let sku = document.querySelector('meta[itemProp="sku"]').getAttribute('content');
+
+        /** Product type */
+        let productType = productParser.getProductType().productType;
 
         /** Get all images */
         let imagesResult = [];
@@ -37,6 +40,7 @@ var productParser = {
             'productName': productName,
             //'category': category,
             'desc': description,
+            'productType': productType,
             'price': price,
             'currency': currency,
             'sku':sku,
@@ -87,12 +91,23 @@ var productParser = {
         });
     },
 
-    getProductCode: function (){
+    getProductCode: function(){
         let script = document.querySelector("#cta-buttons-box script").innerHTML;
         let from = script.search('{\"itemId');
         let to = script.search(']}\'');
         let result = script.substring(from, to);
         return(JSON.parse(result));
+    },
+
+    getProductType : function(){
+        let result = {};
+        let table = document.querySelectorAll('div[data-role="app-container"] table tr td');
+        table.forEach(function(el) {
+            if (el.innerText === 'Rodzaj'){
+                result.productType = el.nextSibling.innerText;
+            }
+        });
+        return result;
     }
 }
 

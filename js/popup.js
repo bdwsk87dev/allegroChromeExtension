@@ -56,9 +56,11 @@ var popupDownloader = {
             $('#basic_table tbody').append('<tr>' +
                 '<td>' + product.productId + '</td>' +
                 '<td>' + product.productName + '</td>' +
-                '<td>' + product.desc + '</td>' +
+                '<td>' + product.desc.replaceAll('<img ', '<img style="float:left;width:100%;"').replaceAll('style="padding-top:calc','style_old="padding-top:calc') + '</td>' +
+                '<td>' + product.productType + '</td>'+
                 '<td>' + product.price + '</td>' +
                 '<td>' + product.currency + '</td>' +
+                '<td>+</td>' +
                 '<td>' + product.sku + '</td>' +
                 '<td>' + imagesText + '</td>' +
                 '</tr>')
