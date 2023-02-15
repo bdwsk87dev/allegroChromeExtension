@@ -124,6 +124,7 @@ function ExcelGen(options) {
             //update to specify format for input by column, or have autoformat.
             //based upon default excel format numbering system
             if (value.match(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/)) {
+                //return { "type": "literal", "value": value.replace(/,/g,""), "text": value };
                 return { "type": "literal", "value": value.replace(/,/g,""), "text": value };
             } else if (me.__isDate__(value)) {
                 var tmp = new Date(Date.parse(value));
@@ -334,6 +335,10 @@ function ExcelGen(options) {
         "textOrValue": function () {
             var t = this.find("select, input");
             return (t.length) ? t.val() : this.text();
+        },
+        "getHtml": function (){
+            console.log(this.context);
+            return this.context.innerHTML;
         }
     });
 
@@ -395,7 +400,7 @@ function ExcelGen(options) {
                 $(this).children("th,td").each(function () {
                     var cell = $(this);
                     if ((!outerThis.options.exclude_selector) || (cell.is(outerThis.options.exclude_selector) === false)) {
-                        row.push(outerThis.sharedStrings.add($(this).textOrValue().trim().replace(/ +(?= )/g, '')));
+                        row.push(outerThis.sharedStrings.add($(this).getHtml().trim().replace(/ +(?= )/g, '')));
                     }
                 });
                 outerThis.sheet.rows.push(row);

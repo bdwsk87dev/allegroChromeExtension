@@ -25,7 +25,7 @@ var popupDownloader = {
 
         /** Testing button !! **/
         $("#export").click(() => {
-            popupDownloader.exportExcel();
+            popupDownloader.exportTest();
         });
     },
 
@@ -54,11 +54,12 @@ var popupDownloader = {
 
             /** Exporting buffer table */
             $('#basic_table tbody').append('<tr>' +
-                '<td>' + product.productId + '</td>' + 
+                '<td>' + product.productId + '</td>' +
                 '<td>' + product.productName + '</td>' +
-                '<td>' + product.category + '</td>' +
                 '<td>' + product.desc + '</td>' +
                 '<td>' + product.price + '</td>' +
+                '<td>' + product.currency + '</td>' +
+                '<td>' + product.sku + '</td>' +
                 '<td>' + imagesText + '</td>' +
                 '</tr>')
         });
@@ -85,7 +86,18 @@ var popupDownloader = {
         $('#reload403MS').change(function () {
             if ($(this).val() < 1000) $(this).val(1000);
         })
-    }
+    },
+
+    exportTest : function (){
+        let excel = new ExcelGen({
+            "src_id": "basic_table",
+            "show_header": true,
+            "type": "table",
+            "format": "xlsx"
+        });
+        excel.generate();
+    },
+
 }
 
 $(function () {

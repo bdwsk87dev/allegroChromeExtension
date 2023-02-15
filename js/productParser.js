@@ -10,13 +10,20 @@ var productParser = {
         let category = document.querySelector('div[data-box-name="Breadcrumb Container"] ol').innerText;
 
         /** Get product name */
-        let productName = document.getElementsByTagName('h4')[0].innerHTML;
+        /** let productName = document.getElementsByTagName('h4')[0].innerHTML; **/
+        let productName = document.querySelector('meta[itemProp="name"]').getAttribute('content');
 
         /** Ged description */
-        let description = document.querySelector('div[data-box-name="Description card"]').innerText;
+        let description = document.querySelector('div[data-box-name="Description card"]').innerHTML;
 
         /** Get offer price */
-        let price = document.querySelector('div._7030e_qVLm- div span').innerText + document.querySelector('div._7030e_qVLm- div span:nth-child(2)').innerText;
+        let price = document.querySelector('meta[itemProp="price"]').getAttribute('content');
+
+        /** Get offer currency */
+        let currency = document.querySelector('meta[itemProp="priceCurrency"]').getAttribute('content');
+
+        /** Get sku */
+        let sku = document.querySelector('meta[itemProp="sku"]').getAttribute('content');
 
         /** Get all images */
         let imagesResult = [];
@@ -28,9 +35,11 @@ var productParser = {
         productParser.sendData({
             'productId' : productId,
             'productName': productName,
-            'category': category,
+            //'category': category,
             'desc': description,
             'price': price,
+            'currency': currency,
+            'sku':sku,
             'allImages': imagesResult
         });
     },
