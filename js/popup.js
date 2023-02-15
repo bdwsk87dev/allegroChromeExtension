@@ -54,6 +54,7 @@ var popupDownloader = {
 
             /** Exporting buffer table */
             $('#basic_table tbody').append('<tr>' +
+                '<td>' + product.productId + '</td>' + 
                 '<td>' + product.productName + '</td>' +
                 '<td>' + product.category + '</td>' +
                 '<td>' + product.desc + '</td>' +

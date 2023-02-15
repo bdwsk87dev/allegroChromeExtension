@@ -1,6 +1,11 @@
 var productParser = {
     init: function () {
 
+        /** Get product Id */
+        let getIds = productParser.getProductCode();
+        let productId = getIds.itemId;
+        let categoryId = getIds.navCategoryId;
+
         /** Get product category */
         let category = document.querySelector('div[data-box-name="Breadcrumb Container"] ol').innerText;
 
@@ -21,6 +26,7 @@ var productParser = {
         })
 
         productParser.sendData({
+            'productId' : productId,
             'productName': productName,
             'category': category,
             'desc': description,
@@ -70,6 +76,14 @@ var productParser = {
                 elem.getBoundingClientRect();
             }
         });
+    },
+
+    getProductCode: function (){
+        let script = document.querySelector("#cta-buttons-box script").innerHTML;
+        let from = script.search('{\"itemId');
+        let to = script.search(']}\'');
+        let result = script.substring(from, to);
+        return(JSON.parse(result));
     }
 }
 
@@ -87,3 +101,4 @@ let allImages = document.querySelectorAll('div[data-box-name="Description card"]
         })
 console.log(imagesResult);
  */
+
