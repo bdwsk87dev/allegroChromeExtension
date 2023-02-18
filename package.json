@@ -3,18 +3,23 @@
   "version": "1.0.0",
   "description": "allegro",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cross-env NODE_ENV=production webpack",
+    "watch": "npm run build -- --watch"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^9.1.2",
+    "babel-preset-env": "^1.7.0",
+    "exceljs": "^4.3.0",
     "file-system": "^2.2.2",
     "fs": "0.0.1-security",
-    "google-translate-api": "^2.3.0",
-    "google-translate-api-browser": "^3.0.0",
     "js-file-download": "^0.4.4",
-    "modify-exif": "0.0.1"
+    "modify-exif": "0.0.1",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   }
 }

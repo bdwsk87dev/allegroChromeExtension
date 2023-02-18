@@ -75,7 +75,7 @@ var popupDownloader = {
     },
 
     /** Min value for the settigns **/
-    inputValueFixes: function () {
+    inputValueFixes: function () { 
         $('#minPrice').change(function () {
             if ($(this).val() < 0) $(this).val(0);
         })
