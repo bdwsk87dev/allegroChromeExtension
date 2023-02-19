@@ -133,27 +133,6 @@ var popupDownloader = {
       popupDownloader.addExcelProductData(request.data);
     }
   },
-  /** Export to excel function */
-  exportExcel: function (products) {
-    /** Create excel data */
-    products.forEach(product => {
-      /** Prepare images */
-      let imagesText = '';
-      product.allImages.forEach(image => {
-        imagesText += image + ",";
-      });
-      imagesText = imagesText.slice(0, -1);
-
-      /** Exporting buffer table */
-      $('#basic_table tbody').append('<tr>' + '<td>' + product.productId + '</td>' + '<td>' + product.productName + '</td>' + '<td>' + product.desc.replaceAll('<img ', '<img style="float:left;width:100%;"').replaceAll('style="padding-top:calc', 'style_old="padding-top:calc') + '</td>' + '<td>' + product.productType + '</td>' + '<td>' + product.price + '</td>' + '<td>' + product.currency + '</td>' + '<td>+</td>' + '<td>' + product.sku + '</td>' + '<td>' + imagesText + '</td>' + '</tr>');
-    });
-    let excel = new ExcelGen({
-      "src_id": "basic_table",
-      "show_header": true,
-      "type": "table"
-    });
-    excel.generate();
-  },
   /** Min value for the settigns **/
   inputValueFixes: function () {
     $('#minPrice').change(function () {
@@ -173,9 +152,10 @@ var popupDownloader = {
     console.log(product);
     popupDownloader.productsResult.push({
       id: product.productId,
-      name: product.productName,
-      description: product.desc.replaceAll('<img ', '<img style="float:left;width:100%;"').replaceAll('style="padding-top:calc', 'style_old="padding-top:calc') + '</td>',
-      type: product.productType,
+      name_pl: product.productName,
+      name_ru: '=GOOGLETRANSLATE("' + product.productName + '";"pl";"uk")',
+      description_pl: product.desc.replaceAll('<img ', '<img style="float:left;width:100%;"').replaceAll('style="padding-top:calc', 'style_old="padding-top:calc') + '</td>',
+      type_pl: product.productType,
       price: product.price,
       currency: product.currency,
       availability: '+',
@@ -190,7 +170,7 @@ var popupDownloader = {
     workbook.calcProperties.fullCalcOnLoad = true;
 
     /** Add worksheet */
-    const worksheet = workbook.addWorksheet('My Sheet', {
+    const worksheet = workbook.addWorksheet('Export Products Sheet', {
       headerFooter: {
         firstHeader: "Hello Exceljs",
         firstFooter: "Hello World"
@@ -203,26 +183,82 @@ var popupDownloader = {
       key: 'id',
       width: 10
     }, {
-      header: 'Название_позиции',
-      key: 'name',
-      width: 32
+      header: 'Название_позиции_pl',
+      key: 'name_pl',
+      width: 15
     }, {
-      header: 'Описание.',
+      header: 'Название_позиции',
+      key: 'name_ru',
+      width: 20
+    }, {
+      header: 'Название_позиции_укр',
+      key: 'name_uk',
+      width: 20
+    },
+    //N
+    {
+      header: 'Поисковые_запросы',
+      key: 'unsigned1',
+      width: 3
+    }, {
+      header: 'Поисковые_запросы_укр',
+      key: 'unsigned2',
+      width: 3
+    },
+    //Y
+    {
+      header: 'Описание_pl',
+      key: 'description_pl',
+      width: 10,
+      outlineLevel: 1
+    }, {
+      header: 'Описание',
       key: 'description',
       width: 10,
       outlineLevel: 1
     }, {
+      header: 'Описание_укр',
+      key: 'description_uk',
+      width: 10,
+      outlineLevel: 1
+    }, {
+      header: 'Тип_товара_pl',
+      key: 'type_pl',
+      width: 10
+    }, {
       header: 'Тип_товара',
       key: 'type',
-      width: 32
+      width: 10
     }, {
-      header: 'Price',
+      header: 'Цена',
       key: 'price',
-      width: 32
+      width: 10
     }, {
-      header: 'Currency',
+      header: 'Валюта',
       key: 'currency',
-      width: 32
+      width: 10
+    },
+    //N
+    {
+      header: 'Единица_измерения',
+      key: 'unsigned3',
+      width: 3
+    }, {
+      header: 'Минимальный_объем_заказа',
+      key: 'unsigned4',
+      width: 3
+    }, {
+      header: 'Оптовая_цена',
+      key: 'unsigned5',
+      width: 3
+    }, {
+      header: 'Минимальный_заказ_опт',
+      key: 'unsigned6',
+      width: 3
+    }, {
+      header: 'Ссылка_изображения',
+      key: 'image',
+      width: 3
     }, {
       header: 'Наличие',
       key: 'availability',
@@ -235,6 +271,17 @@ var popupDownloader = {
     popupDownloader.productsResult.forEach(data => {
       worksheet.addRow(data);
     });
+
+    /** Название позиции */
+    worksheet.fillFormula('C2:C' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(B1;"pl";"ru")', (row, col) => row);
+    orksheet.fillFormula('D2:D' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(B1;"pl";"uk")', (row, col) => row);
+
+    /** Описание */
+    worksheet.fillFormula('H2:H' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(G1;"pl";"ru")', (row, col) => row);
+    orksheet.fillFormula('I2:I' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(G1;"pl";"uk")', (row, col) => row);
+
+    /** Тип_товара */
+    worksheet.fillFormula('K2:K' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(J1;"pl";"ru")', (row, col) => row);
 
     /** Call the download excel method */
     popupDownloader.downloadExcel(workbook);
