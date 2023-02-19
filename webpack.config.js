@@ -8,11 +8,10 @@ module.exports = {
         filename: 'popup.js',
         publicPath: 'dist/js'
     },
-
     resolve: {
         extensions: ['.js'],
     },
-
+    devtool: 'cheap-module-source-map',
     module:{
         rules:[
             {

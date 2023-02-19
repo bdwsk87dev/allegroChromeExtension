@@ -25,7 +25,7 @@ var popupDownloader = {
 
         /** Testing button !! **/
         $("#export").click(() => {
-            popupDownloader.exportTest();
+            popupDownloader.newExcelExport();
         });
     },
 
@@ -90,16 +90,53 @@ var popupDownloader = {
         })
     },
 
-    exportTest : function (){
-        let excel = new ExcelGen({
-            "src_id": "basic_table",
-            "show_header": true,
-            "type": "table",
-            "format": "xlsx"
-        });
-        excel.generate();
+    addExcelData(){
+
     },
 
+    /** New method of export to excel */
+    newExcelExport : function (){
+        const ExcelJS = require('exceljs');
+        const workbook = new ExcelJS.Workbook();
+        workbook.creator = 'Alex';
+        workbook.calcProperties.fullCalcOnLoad = true;
+
+        /** Add worksheet */
+        const worksheet = workbook.addWorksheet('My Sheet', {
+            headerFooter:{firstHeader: "Hello Exceljs", firstFooter: "Hello World"}
+        });
+
+        /** Set up excel collumns */
+        worksheet.columns = [
+            { header: 'Код_товара', key: 'id', width: 10 },
+            { header: 'Название_позиции', key: 'name', width: 32 },
+            { header: 'Описание.', key: 'DOB', width: 10, outlineLevel: 1 },
+            { header: 'Тип_товара', key: 'name', width: 32 },
+            { header: 'Price', key: 'name', width: 32 },
+            { header: 'Currency', key: 'name', width: 32 },
+            { header: 'Наличие', key: 'name', width: 32 },
+            { header: 'Уникальный_идентификатор', key: 'name', width: 32 },
+            { header: 'Images', key: 'name', width: 32 },
+        ];
+
+        /** Call the download excel method */
+        popupDownloader.downloadExcel(workbook);
+
+    },
+
+    /** Download excel method */
+    downloadExcel: function (workbook) {
+        workbook.xlsx.writeBuffer().then(function (data) {
+            const blob = new Blob([data],
+                { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = window.URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = 'download.xls';
+            anchor.click();
+            window.URL.revokeObjectURL(url);
+        });
+    }
 }
 
 $(function () {
