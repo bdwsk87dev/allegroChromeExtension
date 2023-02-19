@@ -2,15 +2,15 @@ var lastPageParser = {
 
     /** Find last page number for parsing **/
     findLastPageNumber: function () {
-        lastPageParser.lastPage = document.querySelector('div[role="navigation"] span:last-child').innerText;
+        lastPageParser.totalPages = document.querySelector('div[role="navigation"] span:last-child').innerText;
     },
 
     /** Return data to background script **/
     sendData: function () {
         chrome.runtime.sendMessage({
-            action: 'lastPage',
+            action: 'totalPages',
             result: {
-                lastPage: lastPageParser.lastPage
+                totalPages: lastPageParser.totalPages
             }
         }, null);
     }

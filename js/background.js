@@ -1,16 +1,16 @@
-let currentTab = 0;
+let currentTab = null;
 let currentUrl = '';
-let lastPage = 0;
+let totalPages = 0;
 let productList = [];
-let productListResult = [];
+
 let currentParsingPage = 0;
 let currentParsingProduct = 0;
 let minPrice = 0;
 let prodPerFile = 0;
 /** Waiting timers values **/
-let nexPageMS = 1000;
-let nextProductMS = 1000;
-let reload403MS = 5000;
+let nexPageMS = 50000;
+let nextProductMS = 50000;
+let reload403MS = 50000;
 let productUsed = [];
 
 function logging(message) {
@@ -21,13 +21,23 @@ function logging(message) {
     console.log(message);
 }
 
+function getCurrentUrl(){
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        var tab = tabs[0];
+        currentUrl = tab.url
+        logging('Робоча адреса : ' + currentUrl);
+    });
+}
+
 /** Request **/
 function onRequest(request, sender, callback) {
     if (request.action === "start") {
 
-        lastPage = 0;
+        getCurrentUrl();
+
+        totalPages = 0;
         productList = [];
-        productListResult = [];
+
         currentParsingPage = 0;
         currentParsingProduct = 0;
 
@@ -49,125 +59,144 @@ function onRequest(request, sender, callback) {
         logging('Обрана мінімальна ціна : '+ minPrice);
 
         /** Get last product page **/
-        chrome.tabs.executeScript(currentTab, {file: 'js/getLastPage.js'});
+        chrome.tabs.executeScript(currentTab, {file: 'js/first_preparations.js'});
     }
 }
 
 async function nextPage() {
+    logging('nextPage #####################');
+    logging('pause : ' + nexPageMS);
     await pauseme(nexPageMS);
+
+    /** Reset all variables */
+    productUsed=[];
 
     /** Increase current product list page **/
     currentParsingPage++;
+    logging('currentParsingPage : ' + currentParsingPage);
 
     /** Change parsing product list page **/
     let newUrlTo = (currentParsingPage > 1) ?
         currentUrl.split('?p=')[0] :
         currentUrl;
 
-    console.log('currentParsingPage : ' + currentParsingPage);
-    console.log('currentUrl : ' + currentUrl);
-    console.log(newUrlTo + '?p=' + currentParsingPage);
-
+    /** Update tab */
     chrome.tabs.update({url: newUrlTo + '?p=' + currentParsingPage});
+    logging('update url : ' + newUrlTo + '?p=' + currentParsingPage);
 
-    /** first page **/
-    getProductsLinksOnPage();
-}
-
-/** Get product list by single page **/
-function getProductsLinksOnPage() {
+    /** Get product list by single page **/
     chrome.storage.local.set({
         minPrice: minPrice
     }, function () {
+
+        /** Script */
         chrome.tabs.executeScript(currentTab, {file: 'js/pageParser.js'});
     });
+}
+
+
+async function nextProduct() {
+    logging('nextProduct #####################');
+    logging('pause : ' + nextProductMS);
+    await pauseme(nextProductMS);
+
+    /** Получаем url текущего оофера */
+    let productUrl = productList[currentParsingProduct].url;
+    logging('productUrl' + productUrl);
+
+    /** Increase current product list page **/
+    currentParsingProduct++;
+
+    logging('currentParsingProduct' + currentParsingProduct);
+
+    /** Update tab */
+    chrome.tabs.update({url: productUrl});
+    chrome.tabs.onUpdated.addListener( function (tabid, changeInfo, tab) {
+
+        if (changeInfo.status === 'complete') {
+            /** Запускаем скрипт на странице оффера */
+            if(productUsed[currentParsingProduct] === undefined) {
+                productUsed[currentParsingProduct] = true;
+
+                /** Script */
+                chrome.tabs.executeScript(currentTab, {file: 'js/productParser.js'});
+            }
+        }
+    })
 }
 
 /** Messages **/
 async function onMessage(request, sender, callback) {
     switch (request.action) {
-        case "lastPage":
-            lastPage = request.result.lastPage;
+
+        case "totalPages":
+            totalPages = request.result.totalPages;
             await nextPage();
             break;
+
         case "productsList":
+
+            currentParsingProduct = 0;
+
+            logging('recieve product list on page');
+
             /** Делаем проверку, на то что страница загрузилась правильно **/
-            if (request.result.products.length === 0 && currentParsingPage <= lastPage) {
+            if (request.result.products.length === 0 && currentParsingPage <= totalPages) {
+                logging('403');
                 await pauseme(reload403MS);
                 currentParsingPage--;
                 await nextPage();
             }
 
-            /** Обновили глобальный массив товаров **/
-            productList = productList.concat(request.result.products);
-            console.log(request.result.products);
-            console.log(productList);
+            productList = request.result.products;
 
-            logging('Знайдено товарiв на данний момент всього: ' + productList.length);
+            logging('Знайдено товарiв на сторінці: ' + productList.length);
 
             /** Если прошли все страницы списков товаров */
-            if (currentParsingPage < 1) {
-                await nextPage();
-            } else {
+            logging('currentParsingPage : ' + currentParsingPage);
+            if (currentParsingPage < 1 + 1) {
                 /** Exit from here and start parsing products **/
-                console.log(productList);
+                logging('Exit from here and start parsing products');
                 await nextProduct();
+            } else {
+                logging('export to excel');
+                exportToExcel();
             }
             break;
+
         case "productsReady":
-            productListResult = productListResult.concat(request.result.productdata);
+            logging('recieve product data');
+            let productData = request.result.productdata;
+
+
+            logging('currentParsingProduct : ' + currentParsingProduct);
             if (currentParsingProduct < 1) {
-                if (currentParsingProduct >= prodPerFile){
-                    exportToExcel();
-                }
+                sendProductData(productData);
+                logging('call nextProduct');
                 await nextProduct();
             }
             else{
-                exportToExcel();
+                sendProductData(productData);
+                logging('call nextPage');
+                await nextPage();
             }
             break;
     }
 }
 
-async function nextProduct() {
-    await pauseme(nextProductMS);
 
-    /** Increase current product list page **/
-    currentParsingProduct++;
-
-    /** Получаем url текущего оофера */
-    let productUrl = productList[currentParsingProduct-1].url;
-
-    /** Logging */
-    logging('***');
-    logging('Номер офферу: [ ' + currentParsingProduct + ' ]');
-    logging('Парсинг офферу (url):');
-    logging(productUrl);
-
-    chrome.tabs.update({url: productUrl});
-    chrome.tabs.onUpdated.addListener( function (tabid, changeInfo, tab) {
-            console.log(changeInfo.status);
-            console.log(tabid);
-            if (changeInfo.status === 'complete') {
-                console.log(productListResult);
-                /** Запускаем скрипт на странице оффера */
-                if(productUsed[currentParsingProduct] === undefined) {
-                    productUsed[currentParsingProduct] = true;
-                    getProductInfo();
-                }
-            }
-    })
-}
-
-function getProductInfo(){
-    chrome.tabs.executeScript(currentTab, {file: 'js/productParser.js'});
-}
 
 /** Final method. Return parsed products to popup.js for export to excel **/
 function exportToExcel(){
     chrome.runtime.sendMessage({
-        action: 'excelData',
-        message: productListResult
+        action: 'exportToExcel'
+    }, null);
+}
+
+function sendProductData(productData){
+    chrome.runtime.sendMessage({
+        action: 'productData',
+        data: productData
     }, null);
 }
 
@@ -186,13 +215,9 @@ chrome.runtime.onMessage.addListener(onMessage);
 /** On tab activated in browser **/
 chrome.tabs.onActivated.addListener(function (activeInfo) {
     currentTab = activeInfo.tabId;
-    chrome.tabs.get(currentTab, function (tab) {
-        currentUrl = tab.url;
-    });
 });
 
 // On tab updated in browser
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    currentUrl = tab.url;
     currentTab = tab.id;
 });

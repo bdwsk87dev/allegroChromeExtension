@@ -43,8 +43,7 @@ var productParser = {
             'productType': productType,
             'price': price,
             'currency': currency,
-            'sku':sku,
-            'allImages': imagesResult
+            'sku':sku
         });
     },
 
@@ -116,13 +115,3 @@ $(function () {
         productParser.init();
     });
 });
-
-/* for testing
-let imagesResult = [];
-let allImages = document.querySelectorAll('div[data-box-name="Description card"] img');
-        allImages.forEach(image => {
-            imagesResult.push(image.src);
-        })
-console.log(imagesResult);
- */
-

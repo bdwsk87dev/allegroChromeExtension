@@ -1,5 +1,7 @@
 var popupDownloader = {
 
+    productsResult: [],
+
     /** Main method */
     init: function () {
         /** Min value for the settigns **/
@@ -7,11 +9,7 @@ var popupDownloader = {
 
         /** Click start parsing button **/
         $("#start").click(function () {
-
-            /** clear the intermediate table, which is used for export to excel **/
-            $('#basic_table tbody').remove();
-            $('#basic_table').append('<tbody></tbody>')
-
+            popupDownloader.productsResult = [];
             /** send start request for parsing to background.js **/
             chrome.extension.sendRequest({
                 action: "start",
@@ -34,8 +32,11 @@ var popupDownloader = {
         if (request.action === "logging") {
             $('#logger').html($('#logger').html() + "<br>" + request.message);
         }
-        if (request.action === "excelData") {
-            popupDownloader.exportExcel(request.message);
+        if (request.action === "exportToExcel") {
+            popupDownloader.newExcelExport();
+        }
+        if (request.action === "productData") {
+            popupDownloader.addExcelProductData(request.data);
         }
     },
 
@@ -56,8 +57,8 @@ var popupDownloader = {
             $('#basic_table tbody').append('<tr>' +
                 '<td>' + product.productId + '</td>' +
                 '<td>' + product.productName + '</td>' +
-                '<td>' + product.desc.replaceAll('<img ', '<img style="float:left;width:100%;"').replaceAll('style="padding-top:calc','style_old="padding-top:calc') + '</td>' +
-                '<td>' + product.productType + '</td>'+
+                '<td>' + product.desc.replaceAll('<img ', '<img style="float:left;width:100%;"').replaceAll('style="padding-top:calc', 'style_old="padding-top:calc') + '</td>' +
+                '<td>' + product.productType + '</td>' +
                 '<td>' + product.price + '</td>' +
                 '<td>' + product.currency + '</td>' +
                 '<td>+</td>' +
@@ -75,7 +76,7 @@ var popupDownloader = {
     },
 
     /** Min value for the settigns **/
-    inputValueFixes: function () { 
+    inputValueFixes: function () {
         $('#minPrice').change(function () {
             if ($(this).val() < 0) $(this).val(0);
         })
@@ -90,12 +91,22 @@ var popupDownloader = {
         })
     },
 
-    addExcelData(){
-
+    addExcelProductData(product) {
+        console.log(product);
+        popupDownloader.productsResult.push({
+            id: product.productId,
+            name: product.productName,
+            description: product.desc.replaceAll('<img ', '<img style="float:left;width:100%;"').replaceAll('style="padding-top:calc', 'style_old="padding-top:calc') + '</td>',
+            type: product.productType,
+            price: product.price,
+            currency: product.currency,
+            availability: '+',
+            uid: product.sku
+        });
     },
 
     /** New method of export to excel */
-    newExcelExport : function (){
+    newExcelExport: function () {
         const ExcelJS = require('exceljs');
         const workbook = new ExcelJS.Workbook();
         workbook.creator = 'Alex';
@@ -103,21 +114,23 @@ var popupDownloader = {
 
         /** Add worksheet */
         const worksheet = workbook.addWorksheet('My Sheet', {
-            headerFooter:{firstHeader: "Hello Exceljs", firstFooter: "Hello World"}
+            headerFooter: {firstHeader: "Hello Exceljs", firstFooter: "Hello World"}
         });
 
         /** Set up excel collumns */
         worksheet.columns = [
-            { header: 'Код_товара', key: 'id', width: 10 },
-            { header: 'Название_позиции', key: 'name', width: 32 },
-            { header: 'Описание.', key: 'DOB', width: 10, outlineLevel: 1 },
-            { header: 'Тип_товара', key: 'name', width: 32 },
-            { header: 'Price', key: 'name', width: 32 },
-            { header: 'Currency', key: 'name', width: 32 },
-            { header: 'Наличие', key: 'name', width: 32 },
-            { header: 'Уникальный_идентификатор', key: 'name', width: 32 },
-            { header: 'Images', key: 'name', width: 32 },
+            {header: 'Код_товара', key: 'id', width: 10},
+            {header: 'Название_позиции', key: 'name', width: 32},
+            {header: 'Описание.', key: 'description', width: 10, outlineLevel: 1},
+            {header: 'Тип_товара', key: 'type', width: 32},
+            {header: 'Price', key: 'price', width: 32},
+            {header: 'Currency', key: 'currency', width: 32},
+            {header: 'Наличие', key: 'availability', width: 32},
+            {header: 'Уникальный_идентификатор', key: 'uid', width: 32}
         ];
+        popupDownloader.productsResult.forEach(data => {
+            worksheet.addRow(data);
+        });
 
         /** Call the download excel method */
         popupDownloader.downloadExcel(workbook);
@@ -128,7 +141,7 @@ var popupDownloader = {
     downloadExcel: function (workbook) {
         workbook.xlsx.writeBuffer().then(function (data) {
             const blob = new Blob([data],
-                { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
             const url = window.URL.createObjectURL(blob);
             const anchor = document.createElement('a');
             anchor.href = url;
