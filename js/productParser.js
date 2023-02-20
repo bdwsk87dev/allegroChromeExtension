@@ -5,8 +5,8 @@ var productParser = {
         let productId = getIds.itemId;
         let categoryId = getIds.navCategoryId;
 
-        /** Get product category */
-        let category = document.querySelector('div[data-box-name="Breadcrumb Container"] ol').innerText;
+        /** Get product categories */
+        let categories = productParser.categories();
 
         /** Get product name */
         /** let productName = document.getElementsByTagName('h4')[0].innerHTML; **/
@@ -39,7 +39,8 @@ var productParser = {
             'price': price,
             'currency': currency,
             'sku': sku,
-            'mainImages': mainImages
+            'mainImages': mainImages,
+            'categories': categories
         });
     },
 
@@ -91,7 +92,26 @@ var productParser = {
             returnData.push(image.original);
         })
         return returnData;
+    },
+
+    /** Work with categories */
+    categories: function () {
+        let crumbs = []
+        document.querySelectorAll('div[data-box-name="Breadcrumb Container"] ol li a').forEach(el => {
+            crumbs.push({'text':el.innerText, 'id' : el.dataset.analyticsClickCustomId})
+        });
+        crumbs = crumbs.slice(1, crumbs.length-1);
+        /* Result crumbs
+            0: {text: 'Elektronika', id: '42540aec-367a-4e5e-b411-17c09b08e41f'}
+            1: {text: 'Telefony i Akcesoria', id: '4'}
+            2: {text: 'Radiokomunikacja', id: '446'}
+            3: {text: 'Krótkofalówki i Walkie-talkie', id: '28282'}
+            4: {text: 'Urządzenia', id: '55834'}
+         */
+        return crumbs;
     }
+
+
 }
 
 $(function () {

@@ -170,7 +170,7 @@ async function onMessage(request, sender, callback) {
 
 
             logging('currentParsingProduct : ' + currentParsingProduct);
-            if (currentParsingProduct < 1) {
+            if (currentParsingProduct < 5) {
                 sendProductData(productData);
                 logging('call nextProduct');
                 await nextProduct();

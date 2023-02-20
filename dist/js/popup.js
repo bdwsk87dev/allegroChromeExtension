@@ -97,6 +97,8 @@ var __webpack_exports__ = {};
   \*********************/
 var popupDownloader = {
   productsResult: [],
+  groupResult: [],
+  groupExist: [],
   /** Main method */
   init: function () {
     /** Min value for the settigns **/
@@ -104,6 +106,9 @@ var popupDownloader = {
 
     /** Click start parsing button **/
     $("#start").click(function () {
+      popupDownloader.productsResult = [];
+      popupDownloader.groupResult = [];
+      popupDownloader.groupExist = [];
       popupDownloader.productsResult = [];
       /** send start request for parsing to background.js **/
       chrome.extension.sendRequest({
@@ -149,7 +154,6 @@ var popupDownloader = {
     });
   },
   addExcelProductData(product) {
-    console.log(product);
     popupDownloader.productsResult.push({
       id: product.productId,
       name_pl: product.productName,
@@ -158,10 +162,33 @@ var popupDownloader = {
       type_pl: product.productType,
       price: product.price,
       currency: product.currency,
-      images: product.mainImages,
+      images: popupDownloader.prepareImages(product.mainImages),
       availability: '+',
-      uid: product.sku
+      uid: product.sku,
+      group_id: product.categories[product.categories.length - 1].id
     });
+
+    /** Groups */
+    let brc = product.categories;
+    for (let i = brc.length; i >= 0; i--) {
+      if (brc[i] === undefined) continue;
+      let parendId = brc[i - 1] === undefined ? '' : brc[i - 1].id;
+      if (!popupDownloader.groupExist.includes(brc[i].id)) {
+        popupDownloader.groupExist.push(brc[i].id);
+        popupDownloader.groupResult.push({
+          group_name_pl: brc[i].text,
+          group_id: brc[i].id,
+          parent_id: parendId
+        });
+      }
+    }
+  },
+  prepareImages(images) {
+    let result = '';
+    images.forEach(img => {
+      result += img + ',';
+    });
+    return result.slice(0, -1);
   },
   /** New method of export to excel */
   newExcelExport: function () {
@@ -269,6 +296,22 @@ var popupDownloader = {
     }, {
       header: 'Уникальный_идентификатор',
       key: 'uid',
+      width: 32
+    },
+    //N
+    {
+      header: 'Идентификатор_товара',
+      key: 'unsigned36',
+      width: 32
+    }, {
+      header: 'Идентификатор_подраздела',
+      key: 'unsigned37',
+      width: 32
+    },
+    //Y
+    {
+      header: 'Идентификатор_группы',
+      key: 'group_id',
       width: 32
     },
     //N
@@ -443,29 +486,35 @@ var popupDownloader = {
       width: 20
     }, {
       header: 'HTML_заголовок_группы',
-      key: 'parent_id',
+      key: 'unsigned40',
       width: 20
     }, {
       header: 'HTML_заголовок_группы_укр',
-      key: 'parent_id',
+      key: 'unsigned41',
       width: 20
     }, {
       header: 'HTML_описание_группы',
-      key: 'parent_id',
+      key: 'unsigned42',
       width: 20
     }, {
       header: 'HTML_описание_группы_укр',
-      key: 'parent_id',
+      key: 'unsigned43',
       width: 20
     }, {
       header: 'HTML_ключевые_слова_группы',
-      key: 'parent_id',
+      key: 'unsigned44',
       width: 20
     }, {
       header: 'HTML_ключевые_слова_группы_укр',
-      key: 'parent_id',
+      key: 'unsigned45',
       width: 20
     }];
+    popupDownloader.groupResult.forEach(group => {
+      worksheetGroups.addRow(group);
+    });
+    let lastGroupCell = popupDownloader.groupExist.length === 0 ? 2 : popupDownloader.groupExist.length + 1;
+    worksheetGroups.fillFormula('C2:C' + lastGroupCell, 'GOOGLETRANSLATE(B2;"pl";"ru")', (row, col) => row);
+    worksheetGroups.fillFormula('D2:D' + lastGroupCell, 'GOOGLETRANSLATE(B2;"pl";"uk")', (row, col) => row);
 
     /** Call the download excel method */
     popupDownloader.downloadExcel(workbook);
