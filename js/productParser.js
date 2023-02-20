@@ -14,6 +14,7 @@ var productParser = {
 
         /** Get description */
         let description = document.querySelector('div[data-box-name="Description card"]').innerHTML;
+        description = description.replace(/<!--[\s\S]*?--!?>/g, "").replace(/<(?!img)(?!b)(?!ul)(?!\/ul)(?!br)(?!ol)(?!\/ol)(?!li)(?!\/li)\/?[a-z][^>]*(>|$)/gi, "");
 
         /** Get offer price */
         let price = document.querySelector('meta[itemProp="price"]').getAttribute('content');
@@ -109,11 +110,42 @@ var productParser = {
             4: {text: 'Urządzenia', id: '55834'}
          */
         return crumbs;
-    }
+    },
 
 
+    smoothScroll: function (elem, offset = 0) {
+        let height = document.body.scrollHeight;
+        window.scrollTo(0, height);
+        const rect = elem.getBoundingClientRect();
+        let targetPosition = Math.floor(rect.top + self.pageYOffset + offset);
+        window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+        });
+        return new Promise((resolve, reject) => {
+            const failed = setTimeout(() => {
+                reject();
+            }, 2000);
+            const scrollHandler = () => {
+                if (self.pageYOffset === targetPosition) {
+                    window.removeEventListener("scroll", scrollHandler);
+                    clearTimeout(failed);
+                    resolve();
+                }
+            };
+            if (self.pageYOffset === targetPosition) {
+                clearTimeout(failed);
+                resolve();
+            } else {
+                window.addEventListener("scroll", scrollHandler);
+                elem.getBoundingClientRect();
+            }
+        });
+    },
 }
 
 $(function () {
-    productParser.init();
+    productParser.smoothScroll(document.querySelector('div:last-child')).then(() => {
+        productParser.init();
+    });
 });
