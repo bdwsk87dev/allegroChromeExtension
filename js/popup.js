@@ -67,7 +67,8 @@ var popupDownloader = {
             price: product.price,
             currency: product.currency,
             availability: '+',
-            uid: product.sku
+            uid: product.sku,
+            images: product.mainImages
         });
     },
 
@@ -105,7 +106,8 @@ var popupDownloader = {
             {header: 'Минимальный_объем_заказа', key: 'unsigned4', width: 3},
             {header: 'Оптовая_цена', key: 'unsigned5', width: 3},
             {header: 'Минимальный_заказ_опт', key: 'unsigned6', width: 3},
-            {header: 'Ссылка_изображения', key: 'image', width: 3},
+
+            {header: 'Ссылка_изображения', key: 'images', width: 4},
 
 
             {header: 'Наличие', key: 'availability', width: 32},
@@ -117,11 +119,11 @@ var popupDownloader = {
 
         /** Название позиции */
         worksheet.fillFormula('C2:C' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(B1;"pl";"ru")', (row, col) => row);
-        orksheet.fillFormula('D2:D' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(B1;"pl";"uk")', (row, col) => row);
+        worksheet.fillFormula('D2:D' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(B1;"pl";"uk")', (row, col) => row);
 
         /** Описание */
         worksheet.fillFormula('H2:H' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(G1;"pl";"ru")', (row, col) => row);
-        orksheet.fillFormula('I2:I' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(G1;"pl";"uk")', (row, col) => row);
+        worksheet.fillFormula('I2:I' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(G1;"pl";"uk")', (row, col) => row);
 
         /** Тип_товара */
         worksheet.fillFormula('K2:K' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(J1;"pl";"ru")', (row, col) => row);

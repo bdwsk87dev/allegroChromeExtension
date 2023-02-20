@@ -1,8 +1,7 @@
 var productParser = {
     init: function () {
-
         /** Get product Id */
-        let getIds = productParser.getProductCode();
+        let getIds = productParser.getProductId();
         let productId = getIds.itemId;
         let categoryId = getIds.navCategoryId;
 
@@ -28,22 +27,19 @@ var productParser = {
         /** Product type */
         let productType = productParser.getProductType().productType;
 
-        /** Get all images */
-        let imagesResult = [];
-        let allImages = document.querySelectorAll('div[data-box-name="Description card"] img');
-        allImages.forEach(image => {
-            imagesResult.push(image.src);
-        })
+        /** Get all main images */
+        let mainImages = productParser.getOfferImages();
+        mainImages = mainImages.slice(0, 9);
 
         productParser.sendData({
-            'productId' : productId,
+            'productId': productId,
             'productName': productName,
-            //'category': category,
             'desc': description,
             'productType': productType,
             'price': price,
             'currency': currency,
-            'sku':sku
+            'sku': sku,
+            'mainImages': mainImages
         });
     },
 
@@ -57,61 +53,47 @@ var productParser = {
         }, null);
     },
 
-    smoothScroll: function (elem, offset = 0) {
-        let height = document.body.scrollHeight;
-        window.scrollTo(0, height);
-
-        const rect = elem.getBoundingClientRect();
-        let targetPosition = Math.floor(rect.top + self.pageYOffset + offset);
-        window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-        });
-
-        return new Promise((resolve, reject) => {
-            const failed = setTimeout(() => {
-                reject();
-            }, 2000);
-
-            const scrollHandler = () => {
-                if (self.pageYOffset === targetPosition) {
-                    window.removeEventListener("scroll", scrollHandler);
-                    clearTimeout(failed);
-                    resolve();
-                }
-            };
-            if (self.pageYOffset === targetPosition) {
-                clearTimeout(failed);
-                resolve();
-            } else {
-                window.addEventListener("scroll", scrollHandler);
-                elem.getBoundingClientRect();
-            }
-        });
-    },
-
-    getProductCode: function(){
+    /** Get product id */
+    getProductId: function () {
+        /** Find script tag*/
         let script = document.querySelector("#cta-buttons-box script").innerHTML;
+
+        /** Cut string*/
         let from = script.search('{\"itemId');
         let to = script.search(']}\'');
         let result = script.substring(from, to);
-        return(JSON.parse(result));
+
+        /** Return result*/
+        return (JSON.parse(result));
     },
 
-    getProductType : function(){
+    /** Get product type */
+    getProductType: function () {
         let result = {};
         let table = document.querySelectorAll('div[data-role="app-container"] table tr td');
-        table.forEach(function(el) {
-            if (el.innerText === 'Rodzaj'){
+        table.forEach(function (el) {
+            if (el.innerText === 'Rodzaj') {
                 result.productType = el.nextSibling.innerText;
             }
         });
         return result;
+    },
+
+    /** Get product images in gallery */
+    getOfferImages: function () {
+        let script = document.querySelector("body").innerHTML;
+        let from = script.search('"images":\\[{"original":"');
+        let to = script.search(',"verticalThumbnails":false}</script>');
+        let result = '{' + script.substring(from, to) + '}';
+        let images = JSON.parse(result).images;
+        let returnData = [];
+        images.forEach(image => {
+            returnData.push(image.original);
+        })
+        return returnData;
     }
 }
 
 $(function () {
-    productParser.smoothScroll(document.querySelector('div:last-child')).then(() => {
-        productParser.init();
-    });
+    productParser.init();
 });

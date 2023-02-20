@@ -1,0 +1,58 @@
+/** Прокрутка страницы в самый низ */
+
+smoothScroll: function (elem, offset = 0) {
+let height = document.body.scrollHeight;
+window.scrollTo(0, height);
+const rect = elem.getBoundingClientRect();
+let targetPosition = Math.floor(rect.top + self.pageYOffset + offset);
+window.scrollTo({
+    top: targetPosition,
+    behavior: 'smooth'
+});
+return new Promise((resolve, reject) => {
+    const failed = setTimeout(() => {
+        reject();
+    }, 2000);
+    const scrollHandler = () => {
+        if (self.pageYOffset === targetPosition) {
+            window.removeEventListener("scroll", scrollHandler);
+            clearTimeout(failed);
+            resolve();
+        }
+    };
+    if (self.pageYOffset === targetPosition) {
+        clearTimeout(failed);
+        resolve();
+    } else {
+        window.addEventListener("scroll", scrollHandler);
+        elem.getBoundingClientRect();
+    }
+});
+},
+
+$(function () {
+productParser.init();
+productParser.smoothScroll(document.querySelector('div:last-child')).then(() => {
+productParser.init();
+ });
+});
+
+*****
+
+https://www.npmjs.com/package/exceljs
+https://medium.com/geekculture/exporting-data-in-excel-file-in-node-js-f1b298997d47
+https://www.npmjs.com/package/exceljs?activeTab=readme
+https://www.npmjs.com/package/free-translate
+
+*****
+
+=GOOGLETRANSLATE(A2;“pl”;”uk”)
+
+*****
+
+/** Get all description images */
+let descriptionImages = [];
+let allImages = document.querySelectorAll('div[data-box-name="Description card"] img');
+allImages.forEach(image => {
+    descriptionImages.push(image.dataset.src);
+})
