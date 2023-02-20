@@ -66,9 +66,9 @@ var popupDownloader = {
             type_pl: product.productType,
             price: product.price,
             currency: product.currency,
+            images: product.mainImages,
             availability: '+',
             uid: product.sku,
-            images: product.mainImages
         });
     },
 
@@ -81,7 +81,7 @@ var popupDownloader = {
 
         /** Add worksheet */
         const worksheet = workbook.addWorksheet('Export Products Sheet', {
-            headerFooter: {firstHeader: "Hello Exceljs", firstFooter: "Hello World"}
+            headerFooter: {firstHeader: "Hello header", firstFooter: "Hello footer"}
         });
 
         /** Set up excel collumns */
@@ -94,11 +94,11 @@ var popupDownloader = {
             {header: 'Поисковые_запросы', key: 'unsigned1', width: 3},
             {header: 'Поисковые_запросы_укр', key: 'unsigned2', width: 3},
             //Y
-            {header: 'Описание_pl', key: 'description_pl', width: 10, outlineLevel: 1},
-            {header: 'Описание', key: 'description', width: 10, outlineLevel: 1},
-            {header: 'Описание_укр', key: 'description_uk', width: 10, outlineLevel: 1},
-            {header: 'Тип_товара_pl', key: 'type_pl', width: 10},
-            {header: 'Тип_товара', key: 'type', width: 10},
+            {header: 'Описание_pl', key: 'description_pl', width: 14, outlineLevel: 1},
+            {header: 'Описание', key: 'description', width: 14, outlineLevel: 1},
+            {header: 'Описание_укр', key: 'description_uk', width: 14, outlineLevel: 1},
+            {header: 'Тип_товара_pl', key: 'type_pl', width: 12},
+            {header: 'Тип_товара', key: 'type', width: 12},
             {header: 'Цена', key: 'price', width: 10},
             {header: 'Валюта', key: 'currency', width: 10},
             //N
@@ -106,28 +106,81 @@ var popupDownloader = {
             {header: 'Минимальный_объем_заказа', key: 'unsigned4', width: 3},
             {header: 'Оптовая_цена', key: 'unsigned5', width: 3},
             {header: 'Минимальный_заказ_опт', key: 'unsigned6', width: 3},
-
+            //Y
             {header: 'Ссылка_изображения', key: 'images', width: 4},
-
-
             {header: 'Наличие', key: 'availability', width: 32},
-            {header: 'Уникальный_идентификатор', key: 'uid', width: 32}
+            {header: 'Уникальный_идентификатор', key: 'uid', width: 32},
+            //N
+            {header: 'Производитель', key: 'unsigned7', width: 32},
+            {header: 'Страна_производитель', key: 'unsigned8', width: 32},
+            {header: 'Скидка', key: 'unsigned9', width: 32},
+            {header: 'ID_группы_разновидностей', key: 'unsigned10', width: 32},
+            {header: 'Личные_заметки', key: 'unsigned11', width: 32},
+            {header: 'Продукт_на_сайте', key: 'unsigned12', width: 32},
+            {header: 'Cрок действия скидки от', key: 'unsigned14', width: 32},
+            {header: 'Cрок действия скидки до', key: 'unsigned15', width: 32},
+            {header: 'Цена от', key: 'unsigned16', width: 32},
+            {header: 'Ярлык', key: 'unsigned17', width: 32},
+            {header: 'HTML_заголовок', key: 'unsigned18', width: 32},
+            {header: 'HTML_заголовок_укр', key: 'unsigned19', width: 32},
+            {header: 'HTML_описание', key: 'unsigned20', width: 32},
+            {header: 'HTML_описание_укр', key: 'unsigned21', width: 32},
+            {header: 'HTML_ключевые_слова', key: 'unsigned22', width: 32},
+            {header: 'HTML_ключевые_слова_укр', key: 'unsigned23', width: 32},
+            {header: 'Вес,кг', key: 'unsigned24', width: 32},
+            {header: 'Ширина,см', key: 'unsigned25', width: 32},
+            {header: 'Высота,см', key: 'unsigned26', width: 32},
+            {header: 'Длина,см', key: 'unsigned27', width: 32},
+            {header: 'Где_находится_товар', key: 'unsigned28', width: 32},
+            {header: 'Код_маркировки_(GTIN)', key: 'unsigned29', width: 32},
+            {header: 'Номер_устройства_(MPN)', key: 'unsigned30', width: 32},
+            {header: 'Название_Характеристики', key: 'unsigned31', width: 32},
+            {header: 'Измерение_Характеристики', key: 'unsigned32', width: 32},
+            {header: 'Значение_Характеристики', key: 'unsigned33', width: 32},
+            {header: 'Измерение_Характеристики', key: 'unsigned34', width: 32},
+            {header: 'Значение_Характеристики', key: 'unsigned35', width: 32}
         ];
         popupDownloader.productsResult.forEach(data => {
             worksheet.addRow(data);
         });
 
+        let lastProductCell = (popupDownloader.productsResult.length === 0) ? 2 : popupDownloader.productsResult.length + 1;
+
         /** Название позиции */
-        worksheet.fillFormula('C2:C' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(B1;"pl";"ru")', (row, col) => row);
-        worksheet.fillFormula('D2:D' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(B1;"pl";"uk")', (row, col) => row);
+        worksheet.fillFormula('C2:C' + lastProductCell, 'GOOGLETRANSLATE(B2;"pl";"ru")', (row, col) => row);
+        worksheet.fillFormula('D2:D' + lastProductCell, 'GOOGLETRANSLATE(B2;"pl";"uk")', (row, col) => row);
 
         /** Описание */
-        worksheet.fillFormula('H2:H' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(G1;"pl";"ru")', (row, col) => row);
-        worksheet.fillFormula('I2:I' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(G1;"pl";"uk")', (row, col) => row);
+        worksheet.fillFormula('H2:H' + lastProductCell, 'GOOGLETRANSLATE(G2;"pl";"ru")', (row, col) => row);
+        worksheet.fillFormula('I2:I' + lastProductCell, 'GOOGLETRANSLATE(G2;"pl";"uk")', (row, col) => row);
 
         /** Тип_товара */
-        worksheet.fillFormula('K2:K' + popupDownloader.productsResult.length, 'GOOGLETRANSLATE(J1;"pl";"ru")', (row, col) => row);
+        worksheet.fillFormula('K2:K' + lastProductCell, 'GOOGLETRANSLATE(J2;"pl";"ru")', (row, col) => row);
 
+        /**
+         * SECOND PAGE
+         */
+
+        const worksheetGroups = workbook.addWorksheet('Export Groups Sheet', {
+            headerFooter: {firstHeader: "Hello header", firstFooter: "Hello footer"}
+        });
+
+        /** Set up excel collumns */
+        worksheetGroups.columns = [
+            {header: 'Номер_группы', key: 'group_num', width: 10},
+            {header: 'Название_группы_pl', key: 'group_name_pl', width: 15},
+            {header: 'Название_группы', key: 'group_name_ru', width: 15},
+            {header: 'Название_группы_укр', key: 'group_name_uk', width: 15},
+            {header: 'Идентификатор_группы', key: 'group_id', width: 20},
+            {header: 'Номер_родителя', key: 'parent_num', width: 20},
+            {header: 'Идентификатор_родителя', key: 'parent_id', width: 20},
+            {header: 'HTML_заголовок_группы', key: 'parent_id', width: 20},
+            {header: 'HTML_заголовок_группы_укр', key: 'parent_id', width: 20},
+            {header: 'HTML_описание_группы', key: 'parent_id', width: 20},
+            {header: 'HTML_описание_группы_укр', key: 'parent_id', width: 20},
+            {header: 'HTML_ключевые_слова_группы', key: 'parent_id', width: 20},
+            {header: 'HTML_ключевые_слова_группы_укр', key: 'parent_id', width: 20},
+        ];
 
         /** Call the download excel method */
         popupDownloader.downloadExcel(workbook);
