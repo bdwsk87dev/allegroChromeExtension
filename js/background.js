@@ -167,10 +167,10 @@ async function onMessage(request, sender, callback) {
         case "productsReady":
             logging('recieve product data');
             let productData = request.result.productdata;
-
-
             logging('currentParsingProduct : ' + currentParsingProduct);
-            if (currentParsingProduct < 5) {
+
+            if (currentParsingProduct <  productList.length ) {
+            // if (currentParsingProduct < 7) {
                 sendProductData(productData);
                 logging('call nextProduct');
                 await nextProduct();
@@ -183,8 +183,6 @@ async function onMessage(request, sender, callback) {
             break;
     }
 }
-
-
 
 /** Final method. Return parsed products to popup.js for export to excel **/
 function exportToExcel(){

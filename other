@@ -105,3 +105,33 @@ let allImages = document.querySelectorAll('div[data-box-name="Description card"]
 allImages.forEach(image => {
     descriptionImages.push(image.dataset.src);
 })
+
+#######################################################################################
+
+ let elements = document.querySelectorAll('div[data-box-name="Description card"] div, div[data-box-name="Description card"] img');
+        elements.forEach(el=>{
+            el.removeAttribute('style');
+            el.removeAttribute('class');
+            el.removeAttribute('data-src');
+            el.removeAttribute('data-box-name');
+            el.removeAttribute('data-box-id');
+            el.removeAttribute('data-prototype-id');
+            el.removeAttribute('data-prototype-version');
+            el.removeAttribute('data-civ');
+            el.removeAttribute('data-analytics-enabled');
+            el.removeAttribute('data-analytics-category');
+            el.removeAttribute('analytics-groups');
+            el.removeAttribute('data-srcset');
+            el.removeAttribute('sizes');
+            el.removeAttribute('width');
+            el.removeAttribute('alt');
+            el.removeAttribute('name');
+            el.removeAttribute('data-analytics-groups');
+        });
+        let result = document.querySelector('div[data-box-name="Description card"]').innerHTML.replace(/<!(?!img)\/?[a-z][^>]*(>|$)/gi, "");
+console.log(result);
+
+
+..........
+
+

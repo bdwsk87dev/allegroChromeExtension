@@ -164,7 +164,9 @@ var productParser = {
             el.removeAttribute('name');
             el.removeAttribute('data-analytics-groups');
         });
-        return document.querySelector('div[data-box-name="Description card"]').innerHTML;
+        // return document.querySelector('div[data-box-name="Description card"]').innerHTML.replace(/<(?img)\/?[a-z][^>]*(>|$)/gi, "");
+        let result = document.querySelector('div[data-box-name="Description card"]').innerHTML.replace(/<(?!b)(?!div)(?!\/div)(?!br)(?!ul)(?!\/ul)(?!li)(?!\/li)\/?[a-z][^>]*(>|$)/gi, "");
+        return result;
     }
 }
 
