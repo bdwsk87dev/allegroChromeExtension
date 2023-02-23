@@ -67,7 +67,6 @@ var popupDownloader = {
         popupDownloader.productsResult.push({
             id: product.productId,
             name_pl: product.productName,
-            name_ru: '=GOOGLETRANSLATE("' + product.productName + '";"pl";"uk")',
             description_pl: product.desc.replaceAll('<img ', '<img style="float:left;width:100%;"').replaceAll('style="padding-top:calc', 'style_old="padding-top:calc') + '</td>',
             type_pl: product.productType,
             price: product.price,

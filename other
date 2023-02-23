@@ -1,3 +1,48 @@
+
+
+let elements = document.querySelectorAll('div[data-box-name="Description card"] div, div[data-box-name="Description card"] img');
+elements.forEach(el=>{
+el.removeAttribute('style');
+el.removeAttribute('class');
+el.removeAttribute('data-src');
+el.removeAttribute('data-box-name');
+
+el.removeAttribute('data-box-id');
+el.removeAttribute('data-prototype-id');
+el.removeAttribute('data-prototype-version');
+
+el.removeAttribute('data-civ');
+
+el.removeAttribute('data-analytics-enabled');
+
+el.removeAttribute('data-analytics-category');
+
+el.removeAttribute('analytics-groups');
+el.removeAttribute('data-srcset');
+// el.removeAttribute('srcset');
+el.removeAttribute('sizes');
+el.removeAttribute('width');
+el.removeAttribute('alt');
+el.removeAttribute('data-analytics-groups');
+
+
+
+});
+
+
+
+
+let description = document.querySelector('div[data-box-name="Description card"]').innerHTML;
+/*description = description.replace(/<!--[\s\S]*?--!?>/g, "").replace(/<(?!img)(?!b)(?!br)(?!ul)(?!\/ul)(?!li)(?!\/li)\/?[a-z][^>]*(>|$)/gi, "");
+console.log(description);*/
+
+console.log(description);
+
+
+
+
+
+
 /** Прокрутка страницы в самый низ */
 
 smoothScroll: function (elem, offset = 0) {
