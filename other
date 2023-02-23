@@ -38,7 +38,11 @@ console.log(description);*/
 
 console.log(description);
 
+###############
 
+ description.replace(/<!--[\s\S]*?--!?>/g, "").replace(/<(?!img)(?!b)(?!ul)(?!\/ul)(?!br)(?!ol)(?!\/ol)(?!li)(?!\/li)\/?[a-z][^>]*(>|$)/gi, "");
+
+ ##############
 
 
 

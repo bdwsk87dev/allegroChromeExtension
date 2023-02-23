@@ -71,10 +71,11 @@ var popupDownloader = {
             type_pl: product.productType,
             price: product.price,
             currency: product.currency,
+            unit: 'шт.',
             images: popupDownloader.prepareImages(product.mainImages),
             availability: '+',
             uid: product.sku,
-            group_id: product.categories[product.categories.length-1].id
+            group_id: product.categories[product.categories.length-1].id,
         });
 
         /** Groups */
@@ -109,7 +110,7 @@ var popupDownloader = {
         workbook.calcProperties.fullCalcOnLoad = true;
 
         /** Add worksheet */
-        const worksheet = workbook.addWorksheet('Export Products Sheet', {
+        const worksheet = workbook.addWorksheet('Export Products Sheet _ Template', {
             headerFooter: {firstHeader: "Hello header", firstFooter: "Hello footer"}
         });
 
@@ -123,21 +124,31 @@ var popupDownloader = {
             {header: 'Поисковые_запросы', key: 'unsigned1', width: 3},
             {header: 'Поисковые_запросы_укр', key: 'unsigned2', width: 3},
             //Y
-            {header: 'Описание_pl', key: 'description_pl', width: 14, outlineLevel: 1},
-            {header: 'Описание', key: 'description', width: 14, outlineLevel: 1},
-            {header: 'Описание_укр', key: 'description_uk', width: 14, outlineLevel: 1},
+            {header: 'Описание_pl', key: 'description_pl', width: 14},
+            {header: 'Описание', key: 'description', width: 14},
+            {header: 'Описание_укр', key: 'description_uk', width: 14},
             {header: 'Тип_товара_pl', key: 'type_pl', width: 12},
             {header: 'Тип_товара', key: 'type', width: 12},
             {header: 'Цена', key: 'price', width: 10},
             {header: 'Валюта', key: 'currency', width: 10},
+            {header: 'Единица_измерения', key: 'unit', width: 3},
             //N
-            {header: 'Единица_измерения', key: 'unsigned3', width: 3},
             {header: 'Минимальный_объем_заказа', key: 'unsigned4', width: 3},
             {header: 'Оптовая_цена', key: 'unsigned5', width: 3},
             {header: 'Минимальный_заказ_опт', key: 'unsigned6', width: 3},
             //Y
             {header: 'Ссылка_изображения', key: 'images', width: 4},
             {header: 'Наличие', key: 'availability', width: 32},
+            //N
+            {header: 'Количество', key: 'unsigned36', width: 4},
+            {header: 'Номер_группы', key: 'unsigned36', width: 4},
+            {header: 'Название_группы', key: 'unsigned36', width: 4},
+            {header: 'Адрес_подраздела', key: 'unsigned36', width: 4},
+            {header: 'Возможность_поставки', key: 'unsigned36', width: 4},
+            {header: 'Срок_поставки', key: 'unsigned36', width: 4},
+            {header: 'Способ_упаковки', key: 'unsigned36', width: 4},
+            {header: 'Способ_упаковки_укр', key: 'unsigned36', width: 4},
+            //Y
             {header: 'Уникальный_идентификатор', key: 'uid', width: 32},
             //N
             {header: 'Идентификатор_товара', key: 'unsigned36', width: 32},
@@ -195,7 +206,7 @@ var popupDownloader = {
          * SECOND PAGE
          */
 
-        const worksheetGroups = workbook.addWorksheet('Export Groups Sheet', {
+        const worksheetGroups = workbook.addWorksheet('Export Groups Sheet _ Template', {
             headerFooter: {firstHeader: "Hello header", firstFooter: "Hello footer"}
         });
 
@@ -224,6 +235,14 @@ var popupDownloader = {
         worksheetGroups.fillFormula('C2:C' + lastGroupCell, 'GOOGLETRANSLATE(B2;"pl";"ru")', (row, col) => row);
         worksheetGroups.fillFormula('D2:D' + lastGroupCell, 'GOOGLETRANSLATE(B2;"pl";"uk")', (row, col) => row);
 
+        /** Add bgColor for columns which need to be deleted */
+        popupDownloader.fillHeaders(worksheet,['B','G','J']);
+        popupDownloader.fillHeaders(worksheetGroups,['B']);
+
+        /** Add worksheets */
+        workbook.addWorksheet('Export Products Sheet');
+        workbook.addWorksheet('Export Groups Sheet');
+
         /** Call the download excel method */
         popupDownloader.downloadExcel(workbook);
 
@@ -242,6 +261,15 @@ var popupDownloader = {
             window.URL.revokeObjectURL(url);
         });
     },
+
+    fillHeaders:function (worksheet, columns){
+        columns.forEach(col=>{
+            worksheet.getCell(col+'1').fill= {
+                type: 'pattern',
+                pattern:'lightDown',
+            };
+        });
+    }
 }
 
 $(function () {

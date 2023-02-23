@@ -13,8 +13,7 @@ var productParser = {
         let productName = document.querySelector('meta[itemProp="name"]').getAttribute('content');
 
         /** Get description */
-        let description = document.querySelector('div[data-box-name="Description card"]').innerHTML;
-        description = description.replace(/<!--[\s\S]*?--!?>/g, "").replace(/<(?!img)(?!b)(?!ul)(?!\/ul)(?!br)(?!ol)(?!\/ol)(?!li)(?!\/li)\/?[a-z][^>]*(>|$)/gi, "");
+        let description = productParser.getDescription();
 
         /** Get offer price */
         let price = document.querySelector('meta[itemProp="price"]').getAttribute('content');
@@ -142,6 +141,31 @@ var productParser = {
             }
         });
     },
+
+    /** Get offer description */
+    getDescription:function (){
+        let elements = document.querySelectorAll('div[data-box-name="Description card"] div, div[data-box-name="Description card"] img');
+        elements.forEach(el=>{
+            el.removeAttribute('style');
+            el.removeAttribute('class');
+            el.removeAttribute('data-src');
+            el.removeAttribute('data-box-name');
+            el.removeAttribute('data-box-id');
+            el.removeAttribute('data-prototype-id');
+            el.removeAttribute('data-prototype-version');
+            el.removeAttribute('data-civ');
+            el.removeAttribute('data-analytics-enabled');
+            el.removeAttribute('data-analytics-category');
+            el.removeAttribute('analytics-groups');
+            el.removeAttribute('data-srcset');
+            el.removeAttribute('sizes');
+            el.removeAttribute('width');
+            el.removeAttribute('alt');
+            el.removeAttribute('name');
+            el.removeAttribute('data-analytics-groups');
+        });
+        return document.querySelector('div[data-box-name="Description card"]').innerHTML;
+    }
 }
 
 $(function () {
