@@ -62,16 +62,25 @@ function onRequest(request, sender, callback) {
 }
 
 async function nextPage() {
-    logging('nextPage #####################');
-    logging('pause : ' + nexPageMS);
-    await pauseme(nexPageMS);
+    /** L */
+    logging('Наступна сторінка * * * * * * * * *');
+
+    /** При першому проході забираємо паузу */
+    if(currentParsingPage > 0){
+        logging('Ждемо Pause : ' + nexPageMS + ' мс.' );
+        await pauseme(nexPageMS);
+    }
 
     /** Reset all variables */
     productUsed=[];
 
     /** Increase current product list page **/
     currentParsingPage++;
-    logging('currentParsingPage : ' + currentParsingPage);
+
+    // DEBUG !!!
+    if(currentParsingPage === 1 ) currentParsingPage++;
+
+    logging('Поточна сторінка : ' + currentParsingPage);
 
     /** Change parsing product list page **/
     let newUrlTo = (currentParsingPage > 1) ?
@@ -80,7 +89,7 @@ async function nextPage() {
 
     /** Update tab */
     chrome.tabs.update({url: newUrlTo + '?p=' + currentParsingPage});
-    logging('update url : ' + newUrlTo + '?p=' + currentParsingPage);
+    logging('Переходимо на url : ' + newUrlTo + '?p=' + currentParsingPage);
 
     /** Get product list by single page **/
     chrome.storage.local.set({
@@ -94,13 +103,19 @@ async function nextPage() {
 
 
 async function nextProduct() {
-    logging('nextProduct #####################');
-    logging('pause : ' + nextProductMS);
+
+    if(productList.length === 15 || productList.length === 30 || productList.length === 45 || productList.length === 58  ){
+        await pauseme(nextProductMS);
+    }
+
+    logging('Наступний оффер * * * * * * * *');
+    logging('Ждемо... Pause : ' + nextProductMS + ' мс');
     await pauseme(nextProductMS);
 
     /** Получаем url текущего оофера */
     let productUrl = productList[currentParsingProduct].url;
-    logging('productUrl' + productUrl);
+    logging('Offer url : ');
+    logging(productUrl);
 
     /** Increase current product list page **/
     currentParsingProduct++;
@@ -129,6 +144,7 @@ async function onMessage(request, sender, callback) {
 
         case "totalPages":
             totalPages = request.result.totalPages;
+            logging('Всього сторінок : ' + totalPages);
             await nextPage();
             break;
 
@@ -139,6 +155,7 @@ async function onMessage(request, sender, callback) {
             logging('recieve product list on page');
 
             /** Делаем проверку, на то что страница загрузилась правильно **/
+
             if (request.result.products.length === 0 && currentParsingPage <= totalPages) {
                 logging('403');
                 await pauseme(reload403MS);
@@ -152,7 +169,7 @@ async function onMessage(request, sender, callback) {
 
             /** Если прошли все страницы списков товаров */
             logging('currentParsingPage : ' + currentParsingPage);
-            if (currentParsingPage < 1 + 1) {
+            if (currentParsingPage <= totalPages) {
                 /** Exit from here and start parsing products **/
                 logging('Exit from here and start parsing products');
                 await nextProduct();

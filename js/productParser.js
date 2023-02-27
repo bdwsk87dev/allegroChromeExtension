@@ -171,7 +171,8 @@ var productParser = {
 }
 
 $(function () {
-    productParser.smoothScroll(document.querySelector('div:last-child')).then(() => {
-        productParser.init();
-    });
+    productParser.init();
+    // productParser.smoothScroll(document.querySelector('div:last-child')).then(() => {
+    //
+    // });
 });
