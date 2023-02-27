@@ -3,20 +3,23 @@ body {
 }
 
 .logger {
-    border: 1px solid #000000;
-    width: 737px;
+    width: 712px;
     height: 195px;
     overflow: scroll;
     padding: 5px;
+    margin-left: 5px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background-color: #f3f4f7;
 }
 
 table.settings input {
-    height: 20px;
+    height: 12px;
     padding: 5px;
 }
 
 .leftLine {
-    border-left: 2px solid #9A9FD3B7;
+    border-left: 2px solid #ff9576b7;
     padding-left: 5px;
     margin-left: 14px;
 }
@@ -34,15 +37,40 @@ table.settings input {
 }
 
 h2 {
-    background-color: #44566ab7;
+    background-color: #cf2121b7;
     padding: 4px;
     color: white;
     border-radius: 3px;
 }
 
-.button{
-    padding: 10px;
+h3 {
+    padding: 4px;
+    color: #ffffff;
+    border-radius: 3px;
+    background: #818181;
+    background: linear-gradient(90deg, #898d99 0%, #a58989 100%);
+}
+
+.button {
+    background-color: #fffcfb;
+    padding: 5px;
+    border: none;
     cursor: pointer;
+    border-radius: 3px;
+    box-shadow: 2px 2px 0px #ffaf9d;
+}
+
+.settings input {
+    border-radius: 3px;
+    background-color: #f1e8e6;
+    border: none;
+    color: #ad3b19;
+    font-weight: bold;
+}
+
+.button:hover{
+    background-color: #c95959;
+    color: #ffffff;
 }
 
 .settings_block_main{
@@ -58,4 +86,17 @@ h2 {
 .settings_block{
     flex: 1 1 auto;
     padding-right:20px;
+}
+.current_data{
+    margin-top: 10px;
+    padding: 0px;
+}
+
+.current_data li{
+    margin-top:3px;
+}
+
+.control_panel .button{
+    margin-right: 5px;
+    height: 28px;
 }

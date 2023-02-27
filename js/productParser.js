@@ -1,20 +1,19 @@
 var productParser = {
     init: function () {
-
         /** Get product Id */
-        let getIds = productParser.getProductCode();
+        let getIds = productParser.getProductId();
         let productId = getIds.itemId;
         let categoryId = getIds.navCategoryId;
 
-        /** Get product category */
-        let category = document.querySelector('div[data-box-name="Breadcrumb Container"] ol').innerText;
+        /** Get product categories */
+        let categories = productParser.categories();
 
         /** Get product name */
         /** let productName = document.getElementsByTagName('h4')[0].innerHTML; **/
         let productName = document.querySelector('meta[itemProp="name"]').getAttribute('content');
 
         /** Get description */
-        let description = document.querySelector('div[data-box-name="Description card"]').innerHTML;
+        let description = productParser.getDescription();
 
         /** Get offer price */
         let price = document.querySelector('meta[itemProp="price"]').getAttribute('content');
@@ -28,23 +27,20 @@ var productParser = {
         /** Product type */
         let productType = productParser.getProductType().productType;
 
-        /** Get all images */
-        let imagesResult = [];
-        let allImages = document.querySelectorAll('div[data-box-name="Description card"] img');
-        allImages.forEach(image => {
-            imagesResult.push(image.src);
-        })
+        /** Get all main images */
+        let mainImages = productParser.getOfferImages();
+        mainImages = mainImages.slice(0, 9);
 
         productParser.sendData({
-            'productId' : productId,
+            'productId': productId,
             'productName': productName,
-            //'category': category,
             'desc': description,
             'productType': productType,
             'price': price,
             'currency': currency,
-            'sku':sku,
-            'allImages': imagesResult
+            'sku': sku,
+            'mainImages': mainImages,
+            'categories': categories
         });
     },
 
@@ -58,22 +54,77 @@ var productParser = {
         }, null);
     },
 
+    /** Get product id */
+    getProductId: function () {
+        /** Find script tag*/
+        let script = document.querySelector("#cta-buttons-box script").innerHTML;
+
+        /** Cut string*/
+        let from = script.search('{\"itemId');
+        let to = script.search(']}\'');
+        let result = script.substring(from, to);
+
+        /** Return result*/
+        return (JSON.parse(result));
+    },
+
+    /** Get product type */
+    getProductType: function () {
+        let result = {};
+        let table = document.querySelectorAll('div[data-role="app-container"] table tr td');
+        table.forEach(function (el) {
+            if (el.innerText === 'Rodzaj') {
+                result.productType = el.nextSibling.innerText;
+            }
+        });
+        return result;
+    },
+
+    /** Get product images in gallery */
+    getOfferImages: function () {
+        let script = document.querySelector("body").innerHTML;
+        let from = script.search('"images":\\[{"original":"');
+        let to = script.search(',"verticalThumbnails":false}</script>');
+        let result = '{' + script.substring(from, to) + '}';
+        let images = JSON.parse(result).images;
+        let returnData = [];
+        images.forEach(image => {
+            returnData.push(image.original);
+        })
+        return returnData;
+    },
+
+    /** Work with categories */
+    categories: function () {
+        let crumbs = []
+        document.querySelectorAll('div[data-box-name="Breadcrumb Container"] ol li a').forEach(el => {
+            crumbs.push({'text':el.innerText, 'id' : el.dataset.analyticsClickCustomId})
+        });
+        crumbs = crumbs.slice(1, crumbs.length-1);
+        /* Result crumbs
+            0: {text: 'Elektronika', id: '42540aec-367a-4e5e-b411-17c09b08e41f'}
+            1: {text: 'Telefony i Akcesoria', id: '4'}
+            2: {text: 'Radiokomunikacja', id: '446'}
+            3: {text: 'Krótkofalówki i Walkie-talkie', id: '28282'}
+            4: {text: 'Urządzenia', id: '55834'}
+         */
+        return crumbs;
+    },
+
+
     smoothScroll: function (elem, offset = 0) {
         let height = document.body.scrollHeight;
         window.scrollTo(0, height);
-
         const rect = elem.getBoundingClientRect();
         let targetPosition = Math.floor(rect.top + self.pageYOffset + offset);
         window.scrollTo({
             top: targetPosition,
             behavior: 'smooth'
         });
-
         return new Promise((resolve, reject) => {
             const failed = setTimeout(() => {
                 reject();
             }, 2000);
-
             const scrollHandler = () => {
                 if (self.pageYOffset === targetPosition) {
                     window.removeEventListener("scroll", scrollHandler);
@@ -91,38 +142,37 @@ var productParser = {
         });
     },
 
-    getProductCode: function(){
-        let script = document.querySelector("#cta-buttons-box script").innerHTML;
-        let from = script.search('{\"itemId');
-        let to = script.search(']}\'');
-        let result = script.substring(from, to);
-        return(JSON.parse(result));
-    },
-
-    getProductType : function(){
-        let result = {};
-        let table = document.querySelectorAll('div[data-role="app-container"] table tr td');
-        table.forEach(function(el) {
-            if (el.innerText === 'Rodzaj'){
-                result.productType = el.nextSibling.innerText;
-            }
+    /** Get offer description */
+    getDescription:function (){
+        let elements = document.querySelectorAll('div[data-box-name="Description card"] div, div[data-box-name="Description card"] img');
+        elements.forEach(el=>{
+            el.removeAttribute('style');
+            el.removeAttribute('class');
+            el.removeAttribute('data-src');
+            el.removeAttribute('data-box-name');
+            el.removeAttribute('data-box-id');
+            el.removeAttribute('data-prototype-id');
+            el.removeAttribute('data-prototype-version');
+            el.removeAttribute('data-civ');
+            el.removeAttribute('data-analytics-enabled');
+            el.removeAttribute('data-analytics-category');
+            el.removeAttribute('analytics-groups');
+            el.removeAttribute('data-srcset');
+            el.removeAttribute('sizes');
+            el.removeAttribute('width');
+            el.removeAttribute('alt');
+            el.removeAttribute('name');
+            el.removeAttribute('data-analytics-groups');
         });
+        // return document.querySelector('div[data-box-name="Description card"]').innerHTML.replace(/<(?img)\/?[a-z][^>]*(>|$)/gi, "");
+        let result = document.querySelector('div[data-box-name="Description card"]').innerHTML.replace(/<(?!b)(?!div)(?!\/div)(?!br)(?!ul)(?!\/ul)(?!li)(?!\/li)\/?[a-z][^>]*(>|$)/gi, "");
         return result;
     }
 }
 
 $(function () {
-    productParser.smoothScroll(document.querySelector('div:last-child')).then(() => {
-        productParser.init();
-    });
+    productParser.init();
+    // productParser.smoothScroll(document.querySelector('div:last-child')).then(() => {
+    //
+    // });
 });
-
-/* for testing
-let imagesResult = [];
-let allImages = document.querySelectorAll('div[data-box-name="Description card"] img');
-        allImages.forEach(image => {
-            imagesResult.push(image.src);
-        })
-console.log(imagesResult);
- */
-

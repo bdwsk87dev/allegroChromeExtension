@@ -34,7 +34,3 @@ var coreParser = {
 $(function () {
     coreParser.init();
 });
-
-document.addEventListener('DOMContentLoaded', function() {
-
-});

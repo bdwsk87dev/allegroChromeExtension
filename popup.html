@@ -4,17 +4,14 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <script src="js/jquery-1.8.0.min.js" type="text/javascript"></script>
     <script src="js/default.js" type="text/javascript"></script>
-    <script src="js/popup.js"></script>
-    <!-- excel -->
-    <script type="text/javascript" src="js/modules/jszip.js"></script>
-    <script type="text/javascript" src="js/modules/FileSaver.js"></script>
-    <script type="text/javascript" src="js/modules/excel-gen.js"></script>
+    <script src="dist/js/popup.js"></script>
     <link href="styles/style.css" rel="stylesheet" type="text/css">
     <title></title>
 </head>
 <body>
-<h2>Управління</h2>
-<table class="leftLine">
+<h2>Парсер Allegro.pl v 0.911</h2>
+<h3>Управління</h3>
+<table class="control_panel leftLine">
     <tbody>
     <tr>
         <td>
@@ -24,146 +21,64 @@
             <button class="button" id="stop">Зупинити парсер</button>
         </td>
         <td>
-            <button class="button" id="export">Export</button>
+            <button class="button" id="export">Експортувати що є</button>
         </td>
     </tr>
     </tbody>
 </table>
-<h2>Налаштування :</h2>
+<h3>Налаштування</h3>
 <div class="settings_block_main">
     <div class="settings_block">
-        <h3>Iнтервал часу (мінімум 1000) :</h3>
         <table class="settings leftLine">
             <tbody>
             <tr>
                 <td>Наступна сторінка списка товарів :</td>
-                <td><input type="number" id="nexPageMS" placeholder="1000" value="1000" min="1000" step="100"></td>
+                <td><input type="number" id="nexPageMS" placeholder="25000" value="25000" min="25000" step="100"></td>
             </tr>
             <tr>
                 <td>Наступний товар :</td>
-                <td><input type="number" id="nextProductMS" placeholder="1000" value="1000" min="1000" step="100"></td>
+                <td><input type="number" id="nextProductMS" placeholder="25000" value="25000" min="25000" step="100"></td>
             </tr>
             <tr>
                 <td>У разі помилки :</td>
-                <td><input type="number" id="reload403MS" placeholder="5000" value="5000" min="1000" step="100"></td>
+                <td><input type="number" id="reload403MS" placeholder="25000" value="25000" min="25000" step="100"></td>
             </tr>
             </tbody>
         </table>
     </div>
     <div class="settings_block">
-        <h3>Парсер :</h3>
         <table class="settings leftLine">
             <tbody>
             <tr>
-                <td>Мін ціна (zł) :</td>
-                <td><input type="number" id="minPrice" placeholder="40" value="40" min="0" max="9999" step="100"></td>
+                <td>Мінімальна ціна (zł) :</td>
+                <td><input type="number" id="minPrice" placeholder="40" value="40" min="0" max="9999" step="10"></td>
             </tr>
             <tr>
-                <td>Експорт кожні n товарів (max = 300) :</td>
-                <td><input type="number" id="prodPerFile" placeholder="40" value="200" min="5" max="300" step="5"></td>
+                <td>Максимальна ціна (zł) :</td>
+                <td><input type="number" id="maxPrice" placeholder="1000" value="1000" min="0" max="999999" step="10"></td>
             </tr>
             </tbody>
         </table>
     </div>
 </div>
-<h2>Логи</h2>
-<div class='logger' id="logger">logger...</div>
-<table id="basic_table" style="border-collapse: collapse; display: none;">
-    <thead>
-    <tr>
-        <th>
-            Код_товара
-        </th>
+<h3>Логи</h3>
+<div class="leftLine">
+    <div class='logger' id="logger">logger...</div>
+</div>
 
-        <th>
-            Название_позиции
-        </th>
+<ul class="current_data">
+    <li>
+        Поточна сторінка:
+    </li>
+    <li>
+        Поточний товар:
+    </li>
+    <li>
+        Поточний url:
+    </li>
+</ul>
 
-
-        <th>
-            Описание
-        </th>
-
-        <th>
-            Тип_товара
-        </th>
-
-
-
-
-        <th>
-            Price
-        </th>
-
-        <th>
-            Currency
-        </th>
-
-        <th>
-            Наличие
-        </th>
-
-
-
-        <th>
-            Уникальный_идентификатор
-        </th>
-
-        <th>
-            Images
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>
-            <span>1</span>
-        </td>
-        <td>
-            <span>2</span>
-        </td>
-        <td>
-            <span>3</span>
-        </td>
-        <td>
-            <span>4</span>
-        </td>
-        <td>
-            <span>5</span>
-        </td>
-        <td>
-            <span>6</span>
-        </td>
-        <td>
-            <span>7</span>
-        </td>
-
-        <td>
-            <span>8</span>
-        </td>
-
-        <td>
-            <span>9</span>
-        </td>
-
-    </tr>
-    </tbody>
-</table>
 </body>
 </html>
-
-<!-- =GOOGLETRANSLATE(A2;“pl”;”uk”)  -->
-
-<!--
-var script=document.querySelector("#cta-buttons-box script").innerHTML;
-console.log(script);
-var from = script.search('{\"itemId');
-var to = script.search(']}\'');
-var result = script.substring(from,to);
-console.log(result);
-var obj = JSON.parse(result);
-console.log(obj);
-
--->
 
 
