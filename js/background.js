@@ -2,12 +2,10 @@ let currentTab = null;
 let currentUrl = '';
 let totalPages = 0;
 let productList = [];
-
 let currentParsingPage = 0;
 let currentParsingProduct = 0;
 let minPrice = 0;
 let prodPerFile = 0;
-/** Waiting timers values **/
 let nexPageMS = 50000;
 let nextProductMS = 50000;
 let reload403MS = 50000;

@@ -9,8 +9,9 @@
     <title></title>
 </head>
 <body>
-<h2>Управління</h2>
-<table class="leftLine">
+<h2>Парсер Allegro.pl v 0.911</h2>
+<h3>Управління</h3>
+<table class="control_panel leftLine">
     <tbody>
     <tr>
         <td>
@@ -25,10 +26,9 @@
     </tr>
     </tbody>
 </table>
-<h2>Налаштування :</h2>
+<h3>Налаштування</h3>
 <div class="settings_block_main">
     <div class="settings_block">
-        <h3>Iнтервал часу (мінімум 1000) :</h3>
         <table class="settings leftLine">
             <tbody>
             <tr>
@@ -47,23 +47,36 @@
         </table>
     </div>
     <div class="settings_block">
-        <h3>Парсер :</h3>
         <table class="settings leftLine">
             <tbody>
             <tr>
-                <td>Мін ціна (zł) :</td>
-                <td><input type="number" id="minPrice" placeholder="40" value="40" min="0" max="9999" step="100"></td>
+                <td>Мінімальна ціна (zł) :</td>
+                <td><input type="number" id="minPrice" placeholder="40" value="40" min="0" max="9999" step="10"></td>
             </tr>
             <tr>
-                <td>Експорт кожні n товарів (max = 300) :</td>
-                <td><input type="number" id="prodPerFile" placeholder="40" value="200" min="5" max="300" step="5"></td>
+                <td>Максимальна ціна (zł) :</td>
+                <td><input type="number" id="maxPrice" placeholder="1000" value="1000" min="0" max="999999" step="10"></td>
             </tr>
             </tbody>
         </table>
     </div>
 </div>
-<h2>Логи</h2>
-<div class='logger' id="logger">logger...</div>
+<h3>Логи</h3>
+<div class="leftLine">
+    <div class='logger' id="logger">logger...</div>
+</div>
+
+<ul class="current_data">
+    <li>
+        Поточна сторінка:
+    </li>
+    <li>
+        Поточний товар:
+    </li>
+    <li>
+        Поточний url:
+    </li>
+</ul>
 
 </body>
 </html>
