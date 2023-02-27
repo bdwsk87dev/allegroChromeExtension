@@ -10,6 +10,7 @@ let nexPageMS = 50000;
 let nextProductMS = 50000;
 let reload403MS = 50000;
 let productUsed = [];
+let mode = '';
 
 function logging(message) {
     chrome.runtime.sendMessage({
@@ -88,17 +89,24 @@ async function nextPage() {
         currentUrl;
 
     /** Update tab */
+    mode = 'offer_list';
     chrome.tabs.update({url: newUrlTo + '?p=' + currentParsingPage});
     logging('Переходимо на url : ' + newUrlTo + '?p=' + currentParsingPage);
 
-    /** Get product list by single page **/
-    chrome.storage.local.set({
-        minPrice: minPrice
-    }, function () {
 
-        /** Script */
-        chrome.tabs.executeScript(currentTab, {file: 'js/pageParser.js'});
+    chrome.tabs.onUpdated.addListener(function (tabId , info) {
+        if (info.status === 'complete' && currentTab === tabId && mode === 'offer_list') {
+            /** Get product list by single page **/
+            chrome.storage.local.set({
+                minPrice: minPrice
+            }, function () {
+                /** Script */
+                chrome.tabs.executeScript(currentTab, {file: 'js/pageParser.js'});
+            });
+        }
     });
+
+
 }
 
 
@@ -123,10 +131,11 @@ async function nextProduct() {
     logging('currentParsingProduct' + currentParsingProduct);
 
     /** Update tab */
+    mode = 'offer';
     chrome.tabs.update({url: productUrl});
     chrome.tabs.onUpdated.addListener( function (tabid, changeInfo, tab) {
 
-        if (changeInfo.status === 'complete') {
+        if (changeInfo.status === 'complete' && mode === 'offer') {
             /** Запускаем скрипт на странице оффера */
             if(productUsed[currentParsingProduct] === undefined) {
                 productUsed[currentParsingProduct] = true;
