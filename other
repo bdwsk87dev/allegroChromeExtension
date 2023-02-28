@@ -1,4 +1,4 @@
-!!
+!!!! 2
 
 let elements = document.querySelectorAll('div[data-box-name="Description card"] div, div[data-box-name="Description card"] img');
 elements.forEach(el=>{
