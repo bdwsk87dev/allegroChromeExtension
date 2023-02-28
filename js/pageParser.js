@@ -1,10 +1,12 @@
-var coreParser = {
+let coreParser = {
     products: [],
 
-    /** Get localStorageData minPrice **/
     init: function () {
-        chrome.storage.local.get("minPrice", function (fetchedData) {
+        /** Get localStorageData minPrice and maxPrice **/
+        chrome.storage.local.get(null, function(fetchedData) {
             coreParser.minPrice = fetchedData.minPrice;
+            coreParser.maxPrice = fetchedData.maxPrice;
+            /** Call parsing method */
             coreParser.parseData();
         });
     },
@@ -33,5 +35,6 @@ var coreParser = {
 
 /** Init coreParser **/
 $(function () {
+    coreParser.products = [];
     coreParser.init();
 });

@@ -12,6 +12,8 @@ var popupDownloader = {
                 to: 'background_script',
                 action: "start",
                 minPrice: $('#minPrice').val(),
+                maxPrice: $('#maxPrice').val(),
+                pageNum: $('#pageNum').val(),
                 nexPageMS: $('#nexPageMS').val(),
                 nextProductMS: $('#nextProductMS').val(),
                 reload403MS: $('#reload403MS').val(),
@@ -60,14 +62,17 @@ var popupDownloader = {
         $('#minPrice').change(function () {
             if ($(this).val() < 0) $(this).val(0);
         })
+        $('#maxPrice').change(function () {
+            if ($(this).val() < 0) $(this).val(0);
+        })
         $('#nexPageMS').change(function () {
-            if ($(this).val() < 1000) $(this).val(1000);
+            if ($(this).val() < 12000) $(this).val(1200);
         })
         $('#nextProductMS').change(function () {
-            if ($(this).val() < 1000) $(this).val(1000);
+            if ($(this).val() < 12000) $(this).val(12000);
         })
         $('#reload403MS').change(function () {
-            if ($(this).val() < 1000) $(this).val(1000);
+            if ($(this).val() < 12000) $(this).val(12000);
         })
     },
 }

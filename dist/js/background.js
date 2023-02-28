@@ -102,12 +102,14 @@ let productList = [];
 let currentParsingPage = 0;
 let currentParsingProduct = 0;
 let minPrice = 0;
+let maxPrice = 0;
 let prodPerFile = 0;
 let nexPageMS = 50000;
 let nextProductMS = 50000;
 let reload403MS = 50000;
 let productUsed = [];
 let mode = '';
+let pageNum = 0;
 
 /** Export to excel data */
 let productsResult = [];
@@ -121,6 +123,27 @@ function getCurrentUrl() {
     var tab = tabs[0];
     currentUrl = tab.url;
     logging('Поточна адреса : ' + currentUrl);
+
+    /** Get last product page **/
+    /** Update tab */
+    mode = 'get_last_page';
+    chrome.tabs.update({
+      url: currentUrl + '?p=' + pageNum + '&price_from=' + minPrice + '&price_to=' + maxPrice
+    });
+    chrome.tabs.onUpdated.addListener(function (tabId, info) {
+      if (info.status === 'complete' && currentTab === tabId && mode === 'get_last_page') {
+        /** Get product list by single page **/
+        chrome.storage.local.set({
+          minPrice: minPrice,
+          maxPrice: maxPrice
+        }, function () {
+          /** Script */
+          chrome.tabs.executeScript(currentTab, {
+            file: 'js/first_preparations.js'
+          });
+        });
+      }
+    });
   });
 }
 async function nextPage() {
@@ -138,25 +161,29 @@ async function nextPage() {
 
   /** Increase current product list page **/
   currentParsingPage++;
-
-  // DEBUG !!!
-  if (currentParsingPage === 1) currentParsingPage++;
   logging('Поточна сторінка : ' + currentParsingPage);
 
   /** Change parsing product list page **/
   let newUrlTo = currentParsingPage > 1 ? currentUrl.split('?p=')[0] : currentUrl;
+  if (currentParsingPage === 1) {
+    currentParsingPage = pageNum;
+  }
+
+  /** Add max and min price filter */
+  newUrlTo += '?p=' + currentParsingPage + '&price_from=' + minPrice + '&price_to=' + maxPrice;
 
   /** Update tab */
   mode = 'offer_list';
   chrome.tabs.update({
-    url: newUrlTo + '?p=' + currentParsingPage
+    url: newUrlTo
   });
-  logging('Переходимо на url : ' + newUrlTo + '?p=' + currentParsingPage);
+  logging('Переходимо на url : ' + newUrlTo);
   chrome.tabs.onUpdated.addListener(function (tabId, info) {
     if (info.status === 'complete' && currentTab === tabId && mode === 'offer_list') {
       /** Get product list by single page **/
       chrome.storage.local.set({
-        minPrice: minPrice
+        minPrice: minPrice,
+        maxPrice: maxPrice
       }, function () {
         /** Script */
         chrome.tabs.executeScript(currentTab, {
@@ -662,19 +689,17 @@ async function onMessage(request, sender, callback) {
       /** L */
       logging('Запуск парсера...');
 
-      /** Get min price set by user */
+      /** Get min and max prices set by user */
       minPrice = request.minPrice;
+      maxPrice = request.maxPrice;
+      pageNum = request.pageNum;
 
       /** Get prod per file */
       prodPerFile = request.prodPerFile;
 
       /** L */
       logging('Обрана мінімальна ціна : ' + minPrice);
-
-      /** Get last product page **/
-      chrome.tabs.executeScript(currentTab, {
-        file: 'js/first_preparations.js'
-      });
+      logging('Обрана максимальна ціна : ' + maxPrice);
       break;
     case "totalPages":
       totalPages = request.data.totalPages;
@@ -687,7 +712,7 @@ async function onMessage(request, sender, callback) {
 
       /** Делаем проверку, на то что страница загрузилась правильно **/
 
-      if (request.result.products.length === 0 && currentParsingPage <= totalPages) {
+      if (request.result.products.length === 0 && parseInt(currentParsingPage) <= parseInt(totalPages)) {
         logging('403');
         await pauseme(reload403MS);
         currentParsingPage--;
@@ -697,8 +722,9 @@ async function onMessage(request, sender, callback) {
       logging('Знайдено товарiв на сторінці: ' + productList.length);
 
       /** Если прошли все страницы списков товаров */
-      logging('currentParsingPage : ' + currentParsingPage);
-      if (currentParsingPage <= totalPages) {
+      logging('Параметр : currentParsingPage : ' + currentParsingPage);
+      logging('Параметр : totalPages : ' + totalPages);
+      if (parseInt(currentParsingPage) <= parseInt(totalPages)) {
         /** Exit from here and start parsing products **/
         logging('Exit from here and start parsing products');
         await nextProduct();
@@ -710,8 +736,9 @@ async function onMessage(request, sender, callback) {
     case "productsReady":
       logging('recieve product data');
       let productData = request.result.productdata;
-      logging('currentParsingProduct : ' + currentParsingProduct);
-      if (currentParsingProduct < productList.length) {
+      logging('Параметр : productList.length : ' + productList.length);
+      logging('Параметр : currentParsingProduct : ' + currentParsingProduct);
+      if (parseInt(currentParsingProduct) < parseInt(productList.length)) {
         // if (currentParsingProduct < 7) {
         addExcelProductData(productData);
         logging('call nextProduct');

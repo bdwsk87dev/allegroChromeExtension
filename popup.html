@@ -32,15 +32,15 @@
         <table class="settings leftLine">
             <tbody>
             <tr>
-                <td>Наступна сторінка списка товарів :</td>
+                <td>Наступна сторінка списка товарів (мс) :</td>
                 <td><input type="number" id="nexPageMS" placeholder="25000" value="25000" min="25000" step="100"></td>
             </tr>
             <tr>
-                <td>Наступний товар :</td>
-                <td><input type="number" id="nextProductMS" placeholder="25000" value="25000" min="25000" step="100"></td>
+                <td>Наступний товар (мс) :</td>
+                <td><input type="number" id="nextProductMS" placeholder="12000" value="12000" min="12000" step="100"></td>
             </tr>
             <tr>
-                <td>У разі помилки :</td>
+                <td>У разі помилки (мс) :</td>
                 <td><input type="number" id="reload403MS" placeholder="25000" value="25000" min="25000" step="100"></td>
             </tr>
             </tbody>
@@ -57,27 +57,31 @@
                 <td>Максимальна ціна (zł) :</td>
                 <td><input type="number" id="maxPrice" placeholder="1000" value="1000" min="0" max="999999" step="10"></td>
             </tr>
+            <tr>
+                <td>Починаючи з сторінки :</td>
+                <td><input type="number" id="pageNum" placeholder="1" value="1" min="1" max="999999" step="1"></td>
+            </tr>
             </tbody>
         </table>
     </div>
 </div>
 <h3>Логи</h3>
 <div class="leftLine">
-    <div class='logger' id="logger">logger...</div>
+    <div class='logger' id="logger">
+        Увага!!
+        <br>
+        <br>
+        Мінамальний інтервал 12 секунд. Нижче встановити не можливо. Це зроблено спеціально!
+        <br>
+        <br>
+        Інтервали часу, які вказані за замовчуванням, рекомендую не змінювати.
+        <br>
+        <br>
+        При закритті попап вікна плагіна він продовжує виконувати свою роботу... Але налаштування звону вертаються за замовчуванням.
+        <br>
+        <br>
+    </div>
 </div>
-
-<ul class="current_data">
-    <li>
-        Поточна сторінка:
-    </li>
-    <li>
-        Поточний товар:
-    </li>
-    <li>
-        Поточний url:
-    </li>
-</ul>
-
 </body>
 </html>
 
