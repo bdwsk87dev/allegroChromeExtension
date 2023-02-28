@@ -113,6 +113,7 @@ var popupDownloader = {
 
       /** send start request for parsing to background.js **/
       chrome.runtime.sendMessage({
+        to: 'background_script',
         action: "start",
         minPrice: $('#minPrice').val(),
         nexPageMS: $('#nexPageMS').val(),

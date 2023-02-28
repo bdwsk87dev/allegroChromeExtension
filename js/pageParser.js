@@ -22,6 +22,7 @@ var coreParser = {
     /** Return data to background script **/
     sendData: function () {
         chrome.runtime.sendMessage({
+            to: 'background_script',
             action: 'productsList',
             result: {
                 products: coreParser.products

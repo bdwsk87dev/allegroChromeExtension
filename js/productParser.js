@@ -47,6 +47,7 @@ var productParser = {
     /** Return data to background script **/
     sendData: function (data) {
         chrome.runtime.sendMessage({
+            to: 'background_script',
             action: 'productsReady',
             result: {
                 productdata: data
