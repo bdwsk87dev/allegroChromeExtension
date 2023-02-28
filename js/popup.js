@@ -1,8 +1,8 @@
 var popupDownloader = {
 
     productsResult: [],
-    groupResult:[],
-    groupExist:[],
+    groupResult: [],
+    groupExist: [],
 
     /** Main method */
     init: function () {
@@ -17,15 +17,16 @@ var popupDownloader = {
             popupDownloader.groupExist = [];
 
             popupDownloader.productsResult = [];
+
             /** send start request for parsing to background.js **/
-            chrome.extension.sendRequest({
+            chrome.runtime.sendMessage({
                 action: "start",
                 minPrice: $('#minPrice').val(),
                 nexPageMS: $('#nexPageMS').val(),
                 nextProductMS: $('#nextProductMS').val(),
                 reload403MS: $('#reload403MS').val(),
                 prodPerFile: $('#prodPerFile').val()
-            });
+            }, null);
         })
 
         /** Testing button !! **/
@@ -36,15 +37,35 @@ var popupDownloader = {
 
     /** Listener for actions */
     onMessage: function (request, sender, callback) {
-        if (request.action === "logging") {
-            $('#logger').html($('#logger').html() + "<br>" + request.message);
+        switch (request.action) {
+            case "logging":
+                popupDownloader.logging(request.message);
+                break;
+            case "exportToExcel":
+                popupDownloader.newExcelExport();
+                break;
+            case "productData":
+                popupDownloader.addExcelProductData(request.data);
+                break;
+            case "error":
+                popupDownloader.errorLog(request.data.message);
+                break;
         }
-        if (request.action === "exportToExcel") {
-            popupDownloader.newExcelExport();
-        }
-        if (request.action === "productData") {
-            popupDownloader.addExcelProductData(request.data);
-        }
+    },
+
+    logging: function (message) {
+        $('#logger').html($('#logger').html() + "<br>" + message);
+        popupDownloader.scrollLogger();
+    },
+
+    errorLog: function (message) {
+        $('#logger').html($('#logger').html() + "<br><span class='error_string'>" + message + "</span>");
+        popupDownloader.scrollLogger();
+    },
+
+    scrollLogger: function () {
+        const theDiv = document.querySelector('#logger');
+        theDiv.scrollTop = Math.pow(10, 10);
     },
 
     /** Min value for the settigns **/
@@ -75,28 +96,28 @@ var popupDownloader = {
             images: popupDownloader.prepareImages(product.mainImages),
             availability: '+',
             uid: product.sku,
-            group_id: product.categories[product.categories.length-1].id,
+            group_id: product.categories[product.categories.length - 1].id,
         });
 
         /** Groups */
         let brc = product.categories;
-        for(let i = brc.length; i>=0; i--){
-            if (brc[i]===undefined) continue;
-            let parendId = (brc[i-1] === undefined)? '':brc[i-1].id;
-            if(!popupDownloader.groupExist.includes(brc[i].id)){
+        for (let i = brc.length; i >= 0; i--) {
+            if (brc[i] === undefined) continue;
+            let parendId = (brc[i - 1] === undefined) ? '' : brc[i - 1].id;
+            if (!popupDownloader.groupExist.includes(brc[i].id)) {
                 popupDownloader.groupExist.push(brc[i].id);
                 popupDownloader.groupResult.push({
-                    group_name_pl:brc[i].text,
-                    group_id:brc[i].id,
-                    parent_id:parendId
+                    group_name_pl: brc[i].text,
+                    group_id: brc[i].id,
+                    parent_id: parendId
                 })
             }
         }
     },
 
-    prepareImages(images){
+    prepareImages(images) {
         let result = '';
-        images.forEach(img=>{
+        images.forEach(img => {
             result += img + ',';
         })
         return result.slice(0, -1);
@@ -236,8 +257,8 @@ var popupDownloader = {
         worksheetGroups.fillFormula('D2:D' + lastGroupCell, 'GOOGLETRANSLATE(B2;"pl";"uk")', (row, col) => row);
 
         /** Add bgColor for columns which need to be deleted */
-        popupDownloader.fillHeaders(worksheet,['B','G','J']);
-        popupDownloader.fillHeaders(worksheetGroups,['B']);
+        popupDownloader.fillHeaders(worksheet, ['B', 'G', 'J']);
+        popupDownloader.fillHeaders(worksheetGroups, ['B']);
 
         /** Add worksheets */
         workbook.addWorksheet('Export Products Sheet');
@@ -262,11 +283,11 @@ var popupDownloader = {
         });
     },
 
-    fillHeaders:function (worksheet, columns){
-        columns.forEach(col=>{
-            worksheet.getCell(col+'1').fill= {
+    fillHeaders: function (worksheet, columns) {
+        columns.forEach(col => {
+            worksheet.getCell(col + '1').fill = {
                 type: 'pattern',
-                pattern:'lightDown',
+                pattern: 'lightDown',
             };
         });
     }

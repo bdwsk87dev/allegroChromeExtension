@@ -12,54 +12,13 @@ let reload403MS = 50000;
 let productUsed = [];
 let mode = '';
 
-function logging(message) {
-    chrome.runtime.sendMessage({
-        action: 'logging',
-        message: message
-    }, null);
-    console.log(message);
-}
 
-function getCurrentUrl(){
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+function getCurrentUrl() {
+    chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
         var tab = tabs[0];
         currentUrl = tab.url
-        logging('Робоча адреса : ' + currentUrl);
+        logging('Поточна адреса : ' + currentUrl);
     });
-}
-
-/** Request **/
-function onRequest(request, sender, callback) {
-    if (request.action === "start") {
-
-        getCurrentUrl();
-
-        totalPages = 0;
-        productList = [];
-
-        currentParsingPage = 0;
-        currentParsingProduct = 0;
-
-        /** Get timer interval parameters **/
-        nexPageMS = request.nexPageMS;
-        nextProductMS = request.nextProductMS;
-        reload403MS = request.reload403MS;
-
-        /** log **/
-        logging('Запуск парсера...');
-
-        /** Get min price set by user **/
-        minPrice = request.minPrice;
-
-        /** Get prod per file */
-        prodPerFile = request.prodPerFile;
-
-        /** log **/
-        logging('Обрана мінімальна ціна : '+ minPrice);
-
-        /** Get last product page **/
-        chrome.tabs.executeScript(currentTab, {file: 'js/first_preparations.js'});
-    }
 }
 
 async function nextPage() {
@@ -67,19 +26,19 @@ async function nextPage() {
     logging('Наступна сторінка * * * * * * * * *');
 
     /** При першому проході забираємо паузу */
-    if(currentParsingPage > 0){
-        logging('Ждемо Pause : ' + nexPageMS + ' мс.' );
+    if (currentParsingPage > 0) {
+        logging('Ждемо Pause : ' + nexPageMS + ' мс.');
         await pauseme(nexPageMS);
     }
 
     /** Reset all variables */
-    productUsed=[];
+    productUsed = [];
 
     /** Increase current product list page **/
     currentParsingPage++;
 
     // DEBUG !!!
-    if(currentParsingPage === 1 ) currentParsingPage++;
+    if (currentParsingPage === 1) currentParsingPage++;
 
     logging('Поточна сторінка : ' + currentParsingPage);
 
@@ -94,7 +53,7 @@ async function nextPage() {
     logging('Переходимо на url : ' + newUrlTo + '?p=' + currentParsingPage);
 
 
-    chrome.tabs.onUpdated.addListener(function (tabId , info) {
+    chrome.tabs.onUpdated.addListener(function (tabId, info) {
         if (info.status === 'complete' && currentTab === tabId && mode === 'offer_list') {
             /** Get product list by single page **/
             chrome.storage.local.set({
@@ -112,7 +71,7 @@ async function nextPage() {
 
 async function nextProduct() {
 
-    if(productList.length === 15 || productList.length === 30 || productList.length === 45 || productList.length === 58  ){
+    if (productList.length === 15 || productList.length === 30 || productList.length === 45 || productList.length === 58) {
         await pauseme(nextProductMS);
     }
 
@@ -133,11 +92,11 @@ async function nextProduct() {
     /** Update tab */
     mode = 'offer';
     chrome.tabs.update({url: productUrl});
-    chrome.tabs.onUpdated.addListener( function (tabid, changeInfo, tab) {
+    chrome.tabs.onUpdated.addListener(function (tabid, changeInfo, tab) {
 
         if (changeInfo.status === 'complete' && mode === 'offer') {
             /** Запускаем скрипт на странице оффера */
-            if(productUsed[currentParsingProduct] === undefined) {
+            if (productUsed[currentParsingProduct] === undefined) {
                 productUsed[currentParsingProduct] = true;
 
                 /** Script */
@@ -149,10 +108,38 @@ async function nextProduct() {
 
 /** Messages **/
 async function onMessage(request, sender, callback) {
+    if (request.to !== "background_script") return;
     switch (request.action) {
+        case"start":
+            getCurrentUrl();
+            totalPages = 0;
+            productList = [];
+            currentParsingPage = 0;
+            currentParsingProduct = 0;
+
+            /** Get timer interval parameters **/
+            nexPageMS = request.nexPageMS;
+            nextProductMS = request.nextProductMS;
+            reload403MS = request.reload403MS;
+
+            /** log **/
+            logging('Запуск парсера...');
+
+            /** Get min price set by user **/
+            minPrice = request.minPrice;
+
+            /** Get prod per file */
+            prodPerFile = request.prodPerFile;
+
+            /** log **/
+            logging('Обрана мінімальна ціна : ' + minPrice);
+
+            /** Get last product page **/
+            chrome.tabs.executeScript(currentTab, {file: 'js/first_preparations.js'});
+            break;
 
         case "totalPages":
-            totalPages = request.result.totalPages;
+            totalPages = request.data.totalPages;
             logging('Всього сторінок : ' + totalPages);
             await nextPage();
             break;
@@ -193,44 +180,55 @@ async function onMessage(request, sender, callback) {
             let productData = request.result.productdata;
             logging('currentParsingProduct : ' + currentParsingProduct);
 
-            if (currentParsingProduct <  productList.length ) {
-            // if (currentParsingProduct < 7) {
+            if (currentParsingProduct < productList.length) {
+                // if (currentParsingProduct < 7) {
                 sendProductData(productData);
                 logging('call nextProduct');
                 await nextProduct();
-            }
-            else{
+            } else {
                 sendProductData(productData);
                 logging('call nextPage');
                 await nextPage();
             }
             break;
+        case "error":
+            sendToPopup('error', null, request.data.message);
+            break;
+
     }
 }
 
 /** Final method. Return parsed products to popup.js for export to excel **/
-function exportToExcel(){
+function exportToExcel() {
+    sendToPopup('exportToExcel');
+}
+
+function sendProductData(productData) {
+
+    sendToPopup('productData', productData);
+}
+
+function logging(message) {
+    sendToPopup('logging', null, message);
+}
+
+function sendToPopup(action, data = null, message = null) {
     chrome.runtime.sendMessage({
-        action: 'exportToExcel'
+        action: action,
+        data: data,
+        message: message
     }, null);
 }
 
-function sendProductData(productData){
-    chrome.runtime.sendMessage({
-        action: 'productData',
-        data: productData
-    }, null);
-}
 
 /** Ждём некоторое время, делаем так называемую паузу **/
-async function pauseme(time){
+async function pauseme(time) {
     await sleepNow(time);
 }
 
 const sleepNow = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 /** Register actions **/
-chrome.extension.onRequest.addListener(onRequest);
 chrome.runtime.onMessage.addListener(onMessage);
 
 /** Browser actions **/
