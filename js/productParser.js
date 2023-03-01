@@ -2,8 +2,7 @@ var productParser = {
     init: function () {
         /** Get product Id */
         let getIds = productParser.getProductId();
-        let productId = getIds.itemId;
-        let categoryId = getIds.navCategoryId;
+        let productId = (getIds)? getIds.itemId: 'noId';
 
         /** Get product categories */
         let categories = productParser.categories();
@@ -58,15 +57,20 @@ var productParser = {
     /** Get product id */
     getProductId: function () {
         /** Find script tag*/
-        let script = document.querySelector("#cta-buttons-box script").innerHTML;
+        if(document.querySelector("#cta-buttons-box script") !== null){
+            let script = document.querySelector("#cta-buttons-box script").innerHTML;
 
-        /** Cut string*/
-        let from = script.search('{\"itemId');
-        let to = script.search(']}\'');
-        let result = script.substring(from, to);
+            /** Cut string*/
+            let from = script.search('{\"itemId');
+            let to = script.search(']}\'');
+            let result = script.substring(from, to);
 
-        /** Return result*/
-        return (JSON.parse(result));
+            /** Return result*/
+            return (JSON.parse(result));
+        }
+        else{
+            return false;
+        }
     },
 
     /** Get product type */
