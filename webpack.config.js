@@ -2,10 +2,10 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
-    entry:'./js/popup.js',
+    entry:['./js/background.js'],
     output: {
         path: path.join(__dirname,'dist/js'),
-        filename: 'popup.js',
+        filename: 'background.js',
         publicPath: 'dist/js'
     },
     resolve: {
