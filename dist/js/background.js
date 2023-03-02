@@ -260,9 +260,7 @@ function newExcelExport() {
     header: 'Название_позиции_укр',
     key: 'name_uk',
     width: 20
-  },
-  //N
-  {
+  }, {
     header: 'Поисковые_запросы',
     key: 'unsigned1',
     width: 3
@@ -270,9 +268,7 @@ function newExcelExport() {
     header: 'Поисковые_запросы_укр',
     key: 'unsigned2',
     width: 3
-  },
-  //Y
-  {
+  }, {
     header: 'Описание_pl',
     key: 'description_pl',
     width: 14
@@ -284,10 +280,6 @@ function newExcelExport() {
     header: 'Описание_укр',
     key: 'description_uk',
     width: 14
-  }, {
-    header: 'Тип_товара_pl',
-    key: 'type_pl',
-    width: 12
   }, {
     header: 'Тип_товара',
     key: 'type',
@@ -304,9 +296,7 @@ function newExcelExport() {
     header: 'Единица_измерения',
     key: 'unit',
     width: 3
-  },
-  //N
-  {
+  }, {
     header: 'Минимальный_объем_заказа',
     key: 'unsigned4',
     width: 3
@@ -318,9 +308,7 @@ function newExcelExport() {
     header: 'Минимальный_заказ_опт',
     key: 'unsigned6',
     width: 3
-  },
-  //Y
-  {
+  }, {
     header: 'Ссылка_изображения',
     key: 'images',
     width: 4
@@ -328,9 +316,7 @@ function newExcelExport() {
     header: 'Наличие',
     key: 'availability',
     width: 32
-  },
-  //N
-  {
+  }, {
     header: 'Количество',
     key: 'unsigned36',
     width: 4
@@ -362,15 +348,11 @@ function newExcelExport() {
     header: 'Способ_упаковки_укр',
     key: 'unsigned36',
     width: 4
-  },
-  //Y
-  {
+  }, {
     header: 'Уникальный_идентификатор',
     key: 'uid',
     width: 32
-  },
-  //N
-  {
+  }, {
     header: 'Идентификатор_товара',
     key: 'unsigned36',
     width: 32
@@ -378,15 +360,11 @@ function newExcelExport() {
     header: 'Идентификатор_подраздела',
     key: 'unsigned37',
     width: 32
-  },
-  //Y
-  {
+  }, {
     header: 'Идентификатор_группы',
     key: 'group_id',
     width: 32
-  },
-  //N
-  {
+  }, {
     header: 'Производитель',
     key: 'unsigned7',
     width: 32
@@ -491,12 +469,28 @@ function newExcelExport() {
     key: 'unsigned33',
     width: 32
   }, {
-    header: 'Измерение_Характеристики',
+    header: 'Название_Характеристики',
     key: 'unsigned34',
     width: 32
   }, {
-    header: 'Значение_Характеристики',
+    header: 'Измерение_Характеристики',
     key: 'unsigned35',
+    width: 32
+  }, {
+    header: 'Значение_Характеристики',
+    key: 'unsigned36',
+    width: 32
+  }, {
+    header: 'Название_Характеристики',
+    key: 'unsigned37',
+    width: 32
+  }, {
+    header: 'Измерение_Характеристики',
+    key: 'unsigned38',
+    width: 32
+  }, {
+    header: 'Значение_Характеристики',
+    key: 'unsigned39',
     width: 32
   }];
   productsResult.forEach(data => {
@@ -511,9 +505,6 @@ function newExcelExport() {
   /** Описание */
   worksheet.fillFormula('H2:H' + lastProductCell, 'GOOGLETRANSLATE(G2;"pl";"ru")', (row, col) => row);
   worksheet.fillFormula('I2:I' + lastProductCell, 'GOOGLETRANSLATE(G2;"pl";"uk")', (row, col) => row);
-
-  /** Тип_товара */
-  worksheet.fillFormula('K2:K' + lastProductCell, 'GOOGLETRANSLATE(J2;"pl";"ru")', (row, col) => row);
 
   /**
    * SECOND PAGE
@@ -626,7 +617,6 @@ function addExcelProductData(product) {
     id: product.productId,
     name_pl: product.productName,
     description_pl: product.desc.replaceAll('<img ', '<img style="float:left;width:100%;"').replaceAll('style="padding-top:calc', 'style_old="padding-top:calc') + '</td>',
-    type_pl: product.productType,
     price: product.price,
     currency: product.currency,
     unit: 'шт.',
