@@ -29,13 +29,12 @@ function getCurrentUrl() {
         /** Get last product page **/
         /** Update tab */
         mode = 'get_last_page';
-        chrome.tabs.update({url: currentUrl + '?p=' + pageNum + '&price_from='+minPrice+'&price_to='+maxPrice});
+        chrome.tabs.update({url: currentUrl + '?p=' + pageNum + '&price_from=' + minPrice + '&price_to=' + maxPrice});
         chrome.tabs.onUpdated.addListener(function (tabId, info) {
             if (info.status === 'complete' && currentTab === tabId && mode === 'get_last_page') {
                 /** Get product list by single page **/
                 chrome.storage.local.set({
-                    minPrice: minPrice,
-                    maxPrice: maxPrice,
+                    minPrice: minPrice, maxPrice: maxPrice,
                 }, function () {
                     /** Script */
                     chrome.tabs.executeScript(currentTab, {file: 'js/first_preparations.js'});
@@ -47,17 +46,15 @@ function getCurrentUrl() {
 }
 
 async function nextPage() {
-    /** L */
+    /** Reset all variables */
+    productUsed = [];
     logging('Наступна сторінка * * * * * * * * *');
 
     /** При першому проході забираємо паузу */
     if (currentParsingPage > 0) {
-        logging('Ждемо Pause : ' + nexPageMS + ' мс.');
+        logging('Очікуємо : ' + nexPageMS + ' мс.');
         await pauseme(nexPageMS);
     }
-
-    /** Reset all variables */
-    productUsed = [];
 
     /** Increase current product list page **/
     currentParsingPage++;
@@ -65,16 +62,16 @@ async function nextPage() {
     logging('Поточна сторінка : ' + currentParsingPage);
 
     /** Change parsing product list page **/
-    let newUrlTo = (currentParsingPage > 1) ?
-        currentUrl.split('?p=')[0] :
-        currentUrl;
+    let newUrlTo = (currentParsingPage > 1) ? currentUrl.split('?p=')[0] : currentUrl;
 
     if (currentParsingPage === 1) {
         currentParsingPage = pageNum;
     }
 
+    sendProgress();
+
     /** Add max and min price filter */
-    newUrlTo += '?p=' + currentParsingPage + '&price_from='+minPrice+'&price_to='+maxPrice;
+    newUrlTo += '?p=' + currentParsingPage + '&price_from=' + minPrice + '&price_to=' + maxPrice;
 
     /** Update tab */
     mode = 'offer_list';
@@ -86,21 +83,16 @@ async function nextPage() {
         if (info.status === 'complete' && currentTab === tabId && mode === 'offer_list') {
             /** Get product list by single page **/
             chrome.storage.local.set({
-                minPrice: minPrice,
-                maxPrice: maxPrice,
+                minPrice: minPrice, maxPrice: maxPrice,
             }, function () {
                 /** Script */
                 chrome.tabs.executeScript(currentTab, {file: 'js/pageParser.js'});
             });
         }
     });
-
-
 }
 
-
 async function nextProduct() {
-
     if (productList.length === 15 || productList.length === 30 || productList.length === 45 || productList.length === 58) {
         await pauseme(nextProductMS);
     }
@@ -116,7 +108,7 @@ async function nextProduct() {
 
     /** Increase current product list page **/
     currentParsingProduct++;
-
+    sendProgress();
     logging('currentParsingProduct' + currentParsingProduct);
 
     /** Update tab */
@@ -137,7 +129,7 @@ async function nextProduct() {
 }
 
 
-function newExcelExport(){
+function newExcelExport() {
 
     const ExcelJS = require('exceljs');
     const workbook = new ExcelJS.Workbook();
@@ -150,71 +142,131 @@ function newExcelExport(){
     });
 
     /** Set up excel collumns */
-    worksheet.columns = [
-        {header: 'Код_товара', key: 'id', width: 10},
-        {header: 'Url', key: 'product_url', width: 10},
-        {header: 'Название_позиции_pl', key: 'name_pl', width: 15},
-        {header: 'Название_позиции', key: 'name_ru', width: 20},
-        {header: 'Название_позиции_укр', key: 'name_uk', width: 20},
-        {header: 'Поисковые_запросы', key: 'unsigned1', width: 3},
-        {header: 'Поисковые_запросы_укр', key: 'unsigned2', width: 3},
-        {header: 'Описание_pl', key: 'description_pl', width: 14},
-        {header: 'Описание', key: 'description', width: 14},
-        {header: 'Описание_укр', key: 'description_uk', width: 14},
-        {header: 'Тип_товара', key: 'type', width: 12},
-        {header: 'Цена', key: 'price', width: 10},
-        {header: 'Валюта', key: 'currency', width: 10},
-        {header: 'Единица_измерения', key: 'unit', width: 3},
-        {header: 'Минимальный_объем_заказа', key: 'unsigned4', width: 3},
-        {header: 'Оптовая_цена', key: 'unsigned5', width: 3},
-        {header: 'Минимальный_заказ_опт', key: 'unsigned6', width: 3},
-        {header: 'Ссылка_изображения', key: 'images', width: 4},
-        {header: 'Наличие', key: 'availability', width: 32},
-        {header: 'Количество', key: 'unsigned36', width: 4},
-        {header: 'Номер_группы', key: 'unsigned36', width: 4},
-        {header: 'Название_группы', key: 'unsigned36', width: 4},
-        {header: 'Адрес_подраздела', key: 'unsigned36', width: 4},
-        {header: 'Возможность_поставки', key: 'unsigned36', width: 4},
-        {header: 'Срок_поставки', key: 'unsigned36', width: 4},
-        {header: 'Способ_упаковки', key: 'unsigned36', width: 4},
-        {header: 'Способ_упаковки_укр', key: 'unsigned36', width: 4},
-        {header: 'Уникальный_идентификатор', key: 'uid', width: 32},
-        {header: 'Идентификатор_товара', key: 'unsigned36', width: 32},
-        {header: 'Идентификатор_подраздела', key: 'unsigned37', width: 32},
-        {header: 'Идентификатор_группы', key: 'group_id', width: 32},
-        {header: 'Производитель', key: 'unsigned7', width: 32},
-        {header: 'Страна_производитель', key: 'unsigned8', width: 32},
-        {header: 'Скидка', key: 'unsigned9', width: 32},
-        {header: 'ID_группы_разновидностей', key: 'unsigned10', width: 32},
-        {header: 'Личные_заметки', key: 'unsigned11', width: 32},
-        {header: 'Продукт_на_сайте', key: 'unsigned12', width: 32},
-        {header: 'Cрок действия скидки от', key: 'unsigned14', width: 32},
-        {header: 'Cрок действия скидки до', key: 'unsigned15', width: 32},
-        {header: 'Цена от', key: 'unsigned16', width: 32},
-        {header: 'Ярлык', key: 'unsigned17', width: 32},
-        {header: 'HTML_заголовок', key: 'unsigned18', width: 32},
-        {header: 'HTML_заголовок_укр', key: 'unsigned19', width: 32},
-        {header: 'HTML_описание', key: 'unsigned20', width: 32},
-        {header: 'HTML_описание_укр', key: 'unsigned21', width: 32},
-        {header: 'HTML_ключевые_слова', key: 'unsigned22', width: 32},
-        {header: 'HTML_ключевые_слова_укр', key: 'unsigned23', width: 32},
-        {header: 'Вес,кг', key: 'unsigned24', width: 32},
-        {header: 'Ширина,см', key: 'unsigned25', width: 32},
-        {header: 'Высота,см', key: 'unsigned26', width: 32},
-        {header: 'Длина,см', key: 'unsigned27', width: 32},
-        {header: 'Где_находится_товар', key: 'unsigned28', width: 32},
-        {header: 'Код_маркировки_(GTIN)', key: 'unsigned29', width: 32},
-        {header: 'Номер_устройства_(MPN)', key: 'unsigned30', width: 32},
-        {header: 'Название_Характеристики', key: 'unsigned31', width: 32},
-        {header: 'Измерение_Характеристики', key: 'unsigned32', width: 32},
-        {header: 'Значение_Характеристики', key: 'unsigned33', width: 32},
-        {header: 'Название_Характеристики', key: 'unsigned34', width: 32},
-        {header: 'Измерение_Характеристики', key: 'unsigned35', width: 32},
-        {header: 'Значение_Характеристики', key: 'unsigned36', width: 32},
-        {header: 'Название_Характеристики', key: 'unsigned37', width: 32},
-        {header: 'Измерение_Характеристики', key: 'unsigned38', width: 32},
-        {header: 'Значение_Характеристики', key: 'unsigned39', width: 32},
-    ];
+    worksheet.columns = [{header: 'Код_товара', key: 'id', width: 10}, {
+        header: 'Url',
+        key: 'product_url',
+        width: 10
+    }, {header: 'Название_позиции_pl', key: 'name_pl', width: 15}, {
+        header: 'Название_позиции',
+        key: 'name_ru',
+        width: 20
+    }, {header: 'Название_позиции_укр', key: 'name_uk', width: 20}, {
+        header: 'Поисковые_запросы',
+        key: 'unsigned1',
+        width: 3
+    }, {header: 'Поисковые_запросы_укр', key: 'unsigned2', width: 3}, {
+        header: 'Описание_pl',
+        key: 'description_pl',
+        width: 14
+    }, {header: 'Описание', key: 'description', width: 14}, {
+        header: 'Описание_укр',
+        key: 'description_uk',
+        width: 14
+    }, {header: 'Тип_товара', key: 'type', width: 12}, {header: 'Цена', key: 'price', width: 10}, {
+        header: 'Валюта',
+        key: 'currency',
+        width: 10
+    }, {header: 'Единица_измерения', key: 'unit', width: 3}, {
+        header: 'Минимальный_объем_заказа',
+        key: 'unsigned4',
+        width: 3
+    }, {header: 'Оптовая_цена', key: 'unsigned5', width: 3}, {
+        header: 'Минимальный_заказ_опт',
+        key: 'unsigned6',
+        width: 3
+    }, {header: 'Ссылка_изображения', key: 'images', width: 4}, {
+        header: 'Наличие',
+        key: 'availability',
+        width: 32
+    }, {header: 'Количество', key: 'unsigned36', width: 4}, {
+        header: 'Номер_группы',
+        key: 'unsigned36',
+        width: 4
+    }, {header: 'Название_группы', key: 'unsigned36', width: 4}, {
+        header: 'Адрес_подраздела',
+        key: 'unsigned36',
+        width: 4
+    }, {header: 'Возможность_поставки', key: 'unsigned36', width: 4}, {
+        header: 'Срок_поставки',
+        key: 'unsigned36',
+        width: 4
+    }, {header: 'Способ_упаковки', key: 'unsigned36', width: 4}, {
+        header: 'Способ_упаковки_укр',
+        key: 'unsigned36',
+        width: 4
+    }, {header: 'Уникальный_идентификатор', key: 'uid', width: 32}, {
+        header: 'Идентификатор_товара',
+        key: 'unsigned36',
+        width: 32
+    }, {header: 'Идентификатор_подраздела', key: 'unsigned37', width: 32}, {
+        header: 'Идентификатор_группы',
+        key: 'group_id',
+        width: 32
+    }, {header: 'Производитель', key: 'unsigned7', width: 32}, {
+        header: 'Страна_производитель',
+        key: 'unsigned8',
+        width: 32
+    }, {header: 'Скидка', key: 'unsigned9', width: 32}, {
+        header: 'ID_группы_разновидностей',
+        key: 'unsigned10',
+        width: 32
+    }, {header: 'Личные_заметки', key: 'unsigned11', width: 32}, {
+        header: 'Продукт_на_сайте',
+        key: 'unsigned12',
+        width: 32
+    }, {header: 'Cрок действия скидки от', key: 'unsigned14', width: 32}, {
+        header: 'Cрок действия скидки до',
+        key: 'unsigned15',
+        width: 32
+    }, {header: 'Цена от', key: 'unsigned16', width: 32}, {
+        header: 'Ярлык',
+        key: 'unsigned17',
+        width: 32
+    }, {header: 'HTML_заголовок', key: 'unsigned18', width: 32}, {
+        header: 'HTML_заголовок_укр',
+        key: 'unsigned19',
+        width: 32
+    }, {header: 'HTML_описание', key: 'unsigned20', width: 32}, {
+        header: 'HTML_описание_укр',
+        key: 'unsigned21',
+        width: 32
+    }, {header: 'HTML_ключевые_слова', key: 'unsigned22', width: 32}, {
+        header: 'HTML_ключевые_слова_укр',
+        key: 'unsigned23',
+        width: 32
+    }, {header: 'Вес,кг', key: 'unsigned24', width: 32}, {
+        header: 'Ширина,см',
+        key: 'unsigned25',
+        width: 32
+    }, {header: 'Высота,см', key: 'unsigned26', width: 32}, {
+        header: 'Длина,см',
+        key: 'unsigned27',
+        width: 32
+    }, {header: 'Где_находится_товар', key: 'unsigned28', width: 32}, {
+        header: 'Код_маркировки_(GTIN)',
+        key: 'unsigned29',
+        width: 32
+    }, {header: 'Номер_устройства_(MPN)', key: 'unsigned30', width: 32}, {
+        header: 'Название_Характеристики',
+        key: 'unsigned31',
+        width: 32
+    }, {header: 'Измерение_Характеристики', key: 'unsigned32', width: 32}, {
+        header: 'Значение_Характеристики',
+        key: 'unsigned33',
+        width: 32
+    }, {header: 'Название_Характеристики', key: 'unsigned34', width: 32}, {
+        header: 'Измерение_Характеристики',
+        key: 'unsigned35',
+        width: 32
+    }, {header: 'Значение_Характеристики', key: 'unsigned36', width: 32}, {
+        header: 'Название_Характеристики',
+        key: 'unsigned37',
+        width: 32
+    }, {header: 'Измерение_Характеристики', key: 'unsigned38', width: 32}, {
+        header: 'Значение_Характеристики',
+        key: 'unsigned39',
+        width: 32
+    },];
 
 
     productsResult.forEach(data => {
@@ -240,21 +292,31 @@ function newExcelExport(){
     });
 
     /** Set up excel collumns */
-    worksheetGroups.columns = [
-        {header: 'Номер_группы', key: 'group_num', width: 10},
-        {header: 'Название_группы_pl', key: 'group_name_pl', width: 15},
-        {header: 'Название_группы', key: 'group_name_ru', width: 15},
-        {header: 'Название_группы_укр', key: 'group_name_uk', width: 15},
-        {header: 'Идентификатор_группы', key: 'group_id', width: 20},
-        {header: 'Номер_родителя', key: 'parent_num', width: 20},
-        {header: 'Идентификатор_родителя', key: 'parent_id', width: 20},
-        {header: 'HTML_заголовок_группы', key: 'unsigned40', width: 20},
-        {header: 'HTML_заголовок_группы_укр', key: 'unsigned41', width: 20},
-        {header: 'HTML_описание_группы', key: 'unsigned42', width: 20},
-        {header: 'HTML_описание_группы_укр', key: 'unsigned43', width: 20},
-        {header: 'HTML_ключевые_слова_группы', key: 'unsigned44', width: 20},
-        {header: 'HTML_ключевые_слова_группы_укр', key: 'unsigned45', width: 20},
-    ];
+    worksheetGroups.columns = [{header: 'Номер_группы', key: 'group_num', width: 10}, {
+        header: 'Название_группы_pl',
+        key: 'group_name_pl',
+        width: 15
+    }, {header: 'Название_группы', key: 'group_name_ru', width: 15}, {
+        header: 'Название_группы_укр',
+        key: 'group_name_uk',
+        width: 15
+    }, {header: 'Идентификатор_группы', key: 'group_id', width: 20}, {
+        header: 'Номер_родителя',
+        key: 'parent_num',
+        width: 20
+    }, {header: 'Идентификатор_родителя', key: 'parent_id', width: 20}, {
+        header: 'HTML_заголовок_группы',
+        key: 'unsigned40',
+        width: 20
+    }, {header: 'HTML_заголовок_группы_укр', key: 'unsigned41', width: 20}, {
+        header: 'HTML_описание_группы',
+        key: 'unsigned42',
+        width: 20
+    }, {header: 'HTML_описание_группы_укр', key: 'unsigned43', width: 20}, {
+        header: 'HTML_ключевые_слова_группы',
+        key: 'unsigned44',
+        width: 20
+    }, {header: 'HTML_ключевые_слова_группы_укр', key: 'unsigned45', width: 20},];
 
     groupResult.forEach(group => {
         worksheetGroups.addRow(group);
@@ -279,8 +341,7 @@ function newExcelExport(){
 /** Download excel method */
 function downloadExcel(workbook) {
     workbook.xlsx.writeBuffer().then(function (data) {
-        const blob = new Blob([data],
-            {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+        const blob = new Blob([data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
         const url = window.URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = url;
@@ -290,16 +351,15 @@ function downloadExcel(workbook) {
     });
 }
 
-function fillHeaders (worksheet, columns) {
+function fillHeaders(worksheet, columns) {
     columns.forEach(col => {
         worksheet.getCell(col + '1').fill = {
-            type: 'pattern',
-            pattern: 'lightDown',
+            type: 'pattern', pattern: 'lightDown',
         };
     });
 }
 
-function addExcelProductData(product){
+function addExcelProductData(product) {
     productsResult.push({
         id: product.productId,
         name_pl: product.productName,
@@ -322,9 +382,7 @@ function addExcelProductData(product){
         if (!groupExist.includes(brc[i].id)) {
             groupExist.push(brc[i].id);
             groupResult.push({
-                group_name_pl: brc[i].text,
-                group_id: brc[i].id,
-                parent_id: parendId
+                group_name_pl: brc[i].text, group_id: brc[i].id, parent_id: parendId
             })
         }
     }
@@ -382,8 +440,6 @@ async function onMessage(request, sender, callback) {
             /** L */
             logging('Обрана мінімальна ціна : ' + minPrice);
             logging('Обрана максимальна ціна : ' + maxPrice);
-
-
             break;
 
         case "totalPages":
@@ -446,7 +502,6 @@ async function onMessage(request, sender, callback) {
         case "error":
             sendToPopup('error', null, request.data.message);
             break;
-
     }
 }
 
@@ -456,7 +511,6 @@ function exportToExcel() {
 }
 
 function sendProductData(productData) {
-
     sendToPopup('productData', productData);
 }
 
@@ -466,12 +520,13 @@ function logging(message) {
 
 function sendToPopup(action, data = null, message = null) {
     chrome.runtime.sendMessage({
-        action: action,
-        data: data,
-        message: message
+        action: action, data: data, message: message
     }, null);
 }
 
+function sendProgress() {
+    sendToPopup('progress', {page: currentParsingPage, product: currentParsingProduct});
+}
 
 /** Ждём некоторое время, делаем так называемую паузу **/
 async function pauseme(time) {

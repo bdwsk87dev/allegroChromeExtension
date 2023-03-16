@@ -39,6 +39,10 @@ var popupDownloader = {
             case "error":
                 popupDownloader.errorLog(request.data.message);
                 break;
+            case "progress":
+                document.querySelector('#current_page_text').innerHTML = request.data.page;
+                document.querySelector('#current_product_text').innerHTML = request.data.product;
+                break;
         }
     },
 

@@ -107,3 +107,35 @@ h3 {
     padding: 15px;
     color: #ad3b19;
 }
+
+.control{
+    display:flex;
+    flex-direction: row;
+
+}
+
+.buttons{
+    width: 60%;
+}
+
+.control_icons{
+    display: flex;
+    justify-content: right;
+    padding-left:15px;
+    width: 50%;
+}
+
+.control_icon {
+    width: 30px;
+    height:30px;
+}
+
+.control_text {
+    font-size: 15px;
+    margin-left: 5px;
+    margin-top: 0px;
+    margin-right: 10px;
+    width: 44px;
+    text-align: right;
+    border-bottom: 1px solid #c17c7c;
+}

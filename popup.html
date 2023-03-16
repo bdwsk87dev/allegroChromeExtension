@@ -9,23 +9,33 @@
     <title></title>
 </head>
 <body>
-<h2>Парсер Allegro.pl v 0.912</h2>
+<h2>Всрацца-парсер Allegro.pl v 1.0</h2>
 <h3>Управління</h3>
-<table class="control_panel leftLine">
-    <tbody>
-    <tr>
-        <td>
-            <button class="button" id="start">Запуск парсера</button>
-        </td>
-        <td>
-            <button class="button" id="stop">Зупинити парсер</button>
-        </td>
-        <td>
-            <button class="button" id="export">Експортувати що є</button>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div class="control">
+    <div class="buttons">
+        <table class="control_panel leftLine">
+            <tbody>
+            <tr>
+                <td>
+                    <button class="button" id="start">Запуск парсера</button>
+                </td>
+                <td>
+                    <button class="button" id="stop">Зупинити парсер</button>
+                </td>
+                <td>
+                    <button class="button" id="export">Експортувати що є</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="control_icons">
+        <img class="control_icon" src="/dist/img/product.png">
+        <div class="control_text" id="current_product_text">1</div>
+        <img class="control_icon" src="/dist/img/page.png">
+        <div class="control_text" id="current_page_text">1</div>
+    </div>
+</div>
 <h3>Налаштування</h3>
 <div class="settings_block_main">
     <div class="settings_block">
@@ -37,7 +47,8 @@
             </tr>
             <tr>
                 <td>Наступний товар (мс) :</td>
-                <td><input type="number" id="nextProductMS" placeholder="12000" value="12000" min="12000" step="100"></td>
+                <td><input type="number" id="nextProductMS" placeholder="12000" value="12000" min="12000" step="100">
+                </td>
             </tr>
             <tr>
                 <td>У разі помилки (мс) :</td>
@@ -55,7 +66,8 @@
             </tr>
             <tr>
                 <td>Максимальна ціна (zł) :</td>
-                <td><input type="number" id="maxPrice" placeholder="1000" value="1000" min="0" max="999999" step="10"></td>
+                <td><input type="number" id="maxPrice" placeholder="1000" value="1000" min="0" max="999999" step="10">
+                </td>
             </tr>
             <tr>
                 <td>Починаючи з сторінки :</td>
@@ -77,7 +89,8 @@
         Інтервали часу, які вказані за замовчуванням, рекомендую не змінювати.
         <br>
         <br>
-        При закритті попап вікна плагіна він продовжує виконувати свою роботу... Але налаштування звону вертаються за замовчуванням ( в input полях! Не в виконанні! ) .
+        При закритті попап вікна плагіна він продовжує виконувати свою роботу... Але налаштування звону вертаються за
+        замовчуванням ( в input полях! Не в виконанні! ) .
         <br>
         <br>
     </div>

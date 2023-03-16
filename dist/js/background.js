@@ -147,17 +147,15 @@ function getCurrentUrl() {
   });
 }
 async function nextPage() {
-  /** L */
+  /** Reset all variables */
+  productUsed = [];
   logging('Наступна сторінка * * * * * * * * *');
 
   /** При першому проході забираємо паузу */
   if (currentParsingPage > 0) {
-    logging('Ждемо Pause : ' + nexPageMS + ' мс.');
+    logging('Очікуємо : ' + nexPageMS + ' мс.');
     await pauseme(nexPageMS);
   }
-
-  /** Reset all variables */
-  productUsed = [];
 
   /** Increase current product list page **/
   currentParsingPage++;
@@ -168,6 +166,7 @@ async function nextPage() {
   if (currentParsingPage === 1) {
     currentParsingPage = pageNum;
   }
+  sendProgress();
 
   /** Add max and min price filter */
   newUrlTo += '?p=' + currentParsingPage + '&price_from=' + minPrice + '&price_to=' + maxPrice;
@@ -208,6 +207,7 @@ async function nextProduct() {
 
   /** Increase current product list page **/
   currentParsingProduct++;
+  sendProgress();
   logging('currentParsingProduct' + currentParsingProduct);
 
   /** Update tab */
@@ -766,6 +766,12 @@ function sendToPopup(action, data = null, message = null) {
     data: data,
     message: message
   }, null);
+}
+function sendProgress() {
+  sendToPopup('progress', {
+    page: currentParsingPage,
+    product: currentParsingProduct
+  });
 }
 
 /** Ждём некоторое время, делаем так называемую паузу **/
