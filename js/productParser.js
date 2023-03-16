@@ -2,7 +2,7 @@ var productParser = {
     init: function () {
         /** Get product Id */
         let getIds = productParser.getProductId();
-        let productId = (getIds)? getIds.itemId: 'noId';
+        let productId = (getIds) ? getIds.itemId : 'noId';
 
         /** Get product categories */
         let categories = productParser.categories();
@@ -39,7 +39,8 @@ var productParser = {
             'currency': currency,
             'sku': sku,
             'mainImages': mainImages,
-            'categories': categories
+            'categories': categories,
+            'product_url': location.href
         });
     },
 
@@ -57,7 +58,7 @@ var productParser = {
     /** Get product id */
     getProductId: function () {
         /** Find script tag*/
-        if(document.querySelector("#cta-buttons-box script") !== null){
+        if (document.querySelector("#cta-buttons-box script") !== null) {
             let script = document.querySelector("#cta-buttons-box script").innerHTML;
 
             /** Cut string*/
@@ -67,8 +68,7 @@ var productParser = {
 
             /** Return result*/
             return (JSON.parse(result));
-        }
-        else{
+        } else {
             return false;
         }
     },
@@ -103,23 +103,19 @@ var productParser = {
     categories: function () {
         let crumbs = []
         document.querySelectorAll('div[data-box-name="Breadcrumb Container"] ol li a').forEach(el => {
-            crumbs.push({'text':el.innerText, 'id' : el.dataset.analyticsClickCustomId})
+            crumbs.push({'text': el.innerText, 'id': el.dataset.analyticsClickCustomId})
         });
-        crumbs = crumbs.slice(1, crumbs.length-1);
-        /* Result crumbs
-            0: {text: 'Elektronika', id: '42540aec-367a-4e5e-b411-17c09b08e41f'}
-            1: {text: 'Telefony i Akcesoria', id: '4'}
-            2: {text: 'Radiokomunikacja', id: '446'}
-            3: {text: 'Krótkofalówki i Walkie-talkie', id: '28282'}
-            4: {text: 'Urządzenia', id: '55834'}
-         */
+        crumbs = crumbs.slice(1, crumbs.length - 1);
         return crumbs;
     },
 
     /** Get offer description */
-    getDescription:function (){
+    getDescription: function () {
         let elements = document.querySelectorAll('div[data-box-name="Description card"] div, div[data-box-name="Description card"] img');
-        elements.forEach(el=>{
+        elements.forEach(el => {
+            if (el.textContent.trim() === "") {
+                el.remove();
+            }
             el.removeAttribute('style');
             el.removeAttribute('class');
             el.removeAttribute('data-src');
@@ -138,8 +134,7 @@ var productParser = {
             el.removeAttribute('name');
             el.removeAttribute('data-analytics-groups');
         });
-        // return document.querySelector('div[data-box-name="Description card"]').innerHTML.replace(/<(?img)\/?[a-z][^>]*(>|$)/gi, "");
-        let result = document.querySelector('div[data-box-name="Description card"]').innerHTML.replace(/<(?!b)(?!div)(?!\/div)(?!br)(?!ul)(?!\/ul)(?!li)(?!\/li)\/?[a-z][^>]*(>|$)/gi, "");
+        let result = document.querySelector('div[data-box-name="Description card"]').innerHTML.replace(/<(?!p)(?!\/p)(?!b)(?!div)(?!\/div)(?!br)(?!ul)(?!\/ul)(?!li)(?!\/li)\/?[a-z][^>]*(>|$)/gi, "");
         return result;
     }
 }

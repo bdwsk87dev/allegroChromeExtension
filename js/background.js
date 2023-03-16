@@ -152,6 +152,7 @@ function newExcelExport(){
     /** Set up excel collumns */
     worksheet.columns = [
         {header: 'Код_товара', key: 'id', width: 10},
+        {header: 'Url', key: 'product_url', width: 10},
         {header: 'Название_позиции_pl', key: 'name_pl', width: 15},
         {header: 'Название_позиции', key: 'name_ru', width: 20},
         {header: 'Название_позиции_укр', key: 'name_uk', width: 20},
@@ -223,12 +224,12 @@ function newExcelExport(){
     let lastProductCell = (productsResult.length === 0) ? 2 : productsResult.length + 1;
 
     /** Название позиции */
-    worksheet.fillFormula('C2:C' + lastProductCell, 'GOOGLETRANSLATE(B2;"pl";"ru")', (row, col) => row);
-    worksheet.fillFormula('D2:D' + lastProductCell, 'GOOGLETRANSLATE(B2;"pl";"uk")', (row, col) => row);
+    //worksheet.fillFormula('C2:C' + lastProductCell, 'GOOGLETRANSLATE(B2;"pl";"ru")', (row, col) => row);
+    //worksheet.fillFormula('D2:D' + lastProductCell, 'GOOGLETRANSLATE(B2;"pl";"uk")', (row, col) => row);
 
     /** Описание */
-    worksheet.fillFormula('H2:H' + lastProductCell, 'GOOGLETRANSLATE(G2;"pl";"ru")', (row, col) => row);
-    worksheet.fillFormula('I2:I' + lastProductCell, 'GOOGLETRANSLATE(G2;"pl";"uk")', (row, col) => row);
+    worksheet.fillFormula('I2:I' + lastProductCell, 'GOOGLETRANSLATE(H2;"pl";"ru")', (row, col) => row);
+    worksheet.fillFormula('J2:J' + lastProductCell, 'GOOGLETRANSLATE(H2;"pl";"uk")', (row, col) => row);
 
     /**
      * SECOND PAGE
@@ -310,6 +311,7 @@ function addExcelProductData(product){
         availability: '+',
         uid: product.sku,
         group_id: product.categories[product.categories.length - 1].id,
+        product_url: product.product_url
     });
 
     /** Groups */
