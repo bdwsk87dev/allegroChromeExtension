@@ -1,4 +1,4 @@
-var lastPageParser = {
+let lastPageParser = {
     /** Find last page number for parsing **/
     findLastPageNumber: function () {
         const navigation = document.querySelector('div[role="navigation"] span:last-child');

@@ -95,26 +95,47 @@ var __webpack_exports__ = {};
 /*!**************************!*\
   !*** ./js/background.js ***!
   \**************************/
-let currentTab = null;
-let currentUrl = '';
-let totalPages = 0;
-let productList = [];
-let currentParsingPage = 0;
-let currentParsingProduct = 0;
-let minPrice = 0;
-let maxPrice = 0;
-let prodPerFile = 0;
-let nexPageMS = 50000;
-let nextProductMS = 50000;
-let reload403MS = 50000;
-let productUsed = [];
-let mode = '';
-let pageNum = 0;
-
-/** Export to excel data */
-let productsResult = [];
-let groupResult = [];
-let groupExist = [];
+let isActive = true,
+  currentTab,
+  currentUrl,
+  totalPages,
+  productList,
+  currentParsingPage,
+  currentParsingProduct,
+  minPrice,
+  maxPrice,
+  prodPerFile,
+  nexPageMS,
+  nextProductMS,
+  reload403MS,
+  productUsed,
+  mode,
+  pageNum,
+  productsResult,
+  groupResult,
+  groupExist;
+function clearVars() {
+  currentTab = null;
+  currentUrl = '';
+  totalPages = 0;
+  productList = [];
+  currentParsingPage = 0;
+  currentParsingProduct = 0;
+  minPrice = 0;
+  maxPrice = 0;
+  prodPerFile = 0;
+  nexPageMS = 50000;
+  nextProductMS = 50000;
+  reload403MS = 50000;
+  productUsed = [];
+  mode = '';
+  pageNum = 0;
+}
+function clearData() {
+  productsResult = [];
+  groupResult = [];
+  groupExist = [];
+}
 function getCurrentUrl() {
   chrome.tabs.query({
     active: true,
@@ -147,6 +168,8 @@ function getCurrentUrl() {
   });
 }
 async function nextPage() {
+  if (!isActive) return;
+
   /** Reset all variables */
   productUsed = [];
   logging('Наступна сторінка * * * * * * * * *');
@@ -193,6 +216,7 @@ async function nextPage() {
   });
 }
 async function nextProduct() {
+  if (!isActive) return;
   if (productList.length === 15 || productList.length === 30 || productList.length === 45 || productList.length === 58) {
     await pauseme(nextProductMS);
   }
@@ -662,6 +686,9 @@ async function onMessage(request, sender, callback) {
       newExcelExport();
       break;
     case "start":
+      clearVars();
+      isActive = true;
+
       /** Get current tab url */
       getCurrentUrl();
 
@@ -695,6 +722,10 @@ async function onMessage(request, sender, callback) {
       /** L */
       logging('Обрана мінімальна ціна : ' + minPrice);
       logging('Обрана максимальна ціна : ' + maxPrice);
+      break;
+    case "stop":
+      clearVars();
+      isActive = false;
       break;
     case "totalPages":
       totalPages = request.data.totalPages;

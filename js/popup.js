@@ -28,6 +28,14 @@ var popupDownloader = {
                 action: "exportToExcel",
             }, null);
         });
+
+        /** Stop **/
+        $("#stop").click(() => {
+            chrome.runtime.sendMessage({
+                to: 'background_script',
+                action: "stop",
+            }, null);
+        });
     },
 
     /** Listener for actions */
