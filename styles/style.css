@@ -139,3 +139,8 @@ h3 {
     text-align: right;
     border-bottom: 1px solid #c17c7c;
 }
+
+.control_progress{
+    margin-right: 30px;
+    margin-top: 10px;
+}

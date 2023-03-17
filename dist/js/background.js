@@ -807,7 +807,13 @@ function sendProgress() {
 
 /** Ждём некоторое время, делаем так называемую паузу **/
 async function pauseme(time) {
-  await sleepNow(time);
+  for (let i = 0; i <= time; i = i + 100) {
+    await sleepNow(100);
+    sendToPopup('pauseBar', {
+      max: time,
+      current: i
+    });
+  }
 }
 const sleepNow = delay => new Promise(resolve => setTimeout(resolve, delay));
 

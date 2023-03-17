@@ -51,6 +51,10 @@ var popupDownloader = {
                 document.querySelector('#current_page_text').innerHTML = request.data.page;
                 document.querySelector('#current_product_text').innerHTML = request.data.product;
                 break;
+            case "pauseBar":
+                document.querySelector('#pauseBar').setAttribute('max',request.data.max);
+                document.querySelector('#pauseBar').setAttribute('value',request.data.current);
+                break;
         }
     },
 
