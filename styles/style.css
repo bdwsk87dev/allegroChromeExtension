@@ -1,9 +1,9 @@
 body {
-    width: 750px;
+    width: 615px;
 }
 
 .logger {
-    width: 712px;
+    width: 575px;
     height: 195px;
     overflow: scroll;
     padding: 5px;
@@ -108,39 +108,80 @@ h3 {
     color: #ad3b19;
 }
 
-.control{
-    display:flex;
+.control {
+    display: flex;
     flex-direction: row;
 
 }
 
-.buttons{
+.buttons {
     width: 60%;
 }
 
-.control_icons{
+.indicators {
     display: flex;
     justify-content: right;
-    padding-left:15px;
-    width: 50%;
+    padding-left: 15px;
+    width: 32%;
 }
 
 .control_icon {
     width: 30px;
-    height:30px;
+    height: 30px;
 }
 
 .control_text {
-    font-size: 15px;
-    margin-left: 5px;
-    margin-top: 0px;
-    margin-right: 10px;
+    font-size: 22px;
+    margin-left: 8px;
     width: 44px;
-    text-align: right;
-    border-bottom: 1px solid #c17c7c;
 }
 
-.control_progress{
-    margin-right: 30px;
-    margin-top: 10px;
+.control_progress {
+    position: absolute;
+    right: 18px;
+    top: 23px;
+}
+
+.popup_control_button {
+    display: block;
+    background: #524b66;
+    border-radius: 4px;
+    width: 33px;
+    height: 30px;
+    margin: 0px;
+    padding-left: 8px;
+    padding-top: 6px;
+    margin-right: 6px;
+}
+
+.popup_control_button:hover {
+    cursor: pointer;
+    background: #cb6840;
+}
+
+
+.popup_control_icon {
+    width: 25px;
+    height: 25px;
+}
+
+.filter-white {
+    filter: invert(100%) sepia(79%) saturate(1%) hue-rotate(86deg) brightness(118%) contrast(119%);
+}
+
+.popup_control_buttons{
+    display: flex;
+    flex-direction: row;
+}
+
+.control_button_last{
+    margin-right: 220px;
+}
+
+.hide{
+    display:none;
+}
+
+.collapsed_body{
+    width:300px;
 }

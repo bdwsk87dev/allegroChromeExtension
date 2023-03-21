@@ -36,6 +36,17 @@ var popupDownloader = {
                 action: "stop",
             }, null);
         });
+
+        /** Collapse **/
+        $("#collapse").click(() => {
+            document.querySelectorAll('.collapsed').forEach(el=>{
+                el.classList.toggle('hide');
+            })
+
+            document.querySelector('body').classList.toggle('collapsed_body')
+            document.querySelector('#collapse').classList.toggle('control_button_last')
+
+        });
     },
 
     /** Listener for actions */

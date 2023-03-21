@@ -70,34 +70,29 @@ function getCurrentUrl() {
 }
 
 async function nextPage() {
-
     if (!isActive) return;
-
-
     /** Reset all variables */
     productUsed = [];
     logging('Наступна сторінка * * * * * * * * *');
-
     /** При першому проході забираємо паузу */
     if (currentParsingPage > 0) {
         logging('Очікуємо : ' + nexPageMS + ' мс.');
         await pauseme(nexPageMS);
     }
-
     /** Increase current product list page **/
     currentParsingPage++;
+    if(currentParsingPage%10===0){
+        newExcelExport('p ' + currentParsingPage);
+    }
 
     logging('Поточна сторінка : ' + currentParsingPage);
-
     /** Change parsing product list page **/
     let newUrlTo = (currentParsingPage > 1) ? currentUrl.split('?p=')[0] : currentUrl;
 
     if (currentParsingPage === 1) {
         currentParsingPage = pageNum;
     }
-
     sendProgress();
-
     /** Add max and min price filter */
     newUrlTo += '?p=' + currentParsingPage + '&price_from=' + minPrice + '&price_to=' + maxPrice;
 
@@ -160,8 +155,7 @@ async function nextProduct() {
 }
 
 
-function newExcelExport() {
-
+function newExcelExport(name = null) {
     const ExcelJS = require('exceljs');
     const workbook = new ExcelJS.Workbook();
     workbook.creator = 'Alex';
@@ -366,17 +360,23 @@ function newExcelExport() {
     workbook.addWorksheet('Export Groups Sheet');
 
     /** Call the download excel method */
-    downloadExcel(workbook);
+    downloadExcel(workbook, name);
 }
 
 /** Download excel method */
-function downloadExcel(workbook) {
+function downloadExcel(workbook, name) {
     workbook.xlsx.writeBuffer().then(function (data) {
         const blob = new Blob([data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
         const url = window.URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = url;
-        anchor.download = 'download.xls';
+        if(name===null){
+            anchor.download = 'download.xls';
+        }
+        else{
+            anchor.download = name + '.xls';
+        }
+
         anchor.click();
         window.URL.revokeObjectURL(url);
     });
@@ -516,7 +516,7 @@ async function onMessage(request, sender, callback) {
                 await nextProduct();
             } else {
                 logging('export to excel');
-                exportToExcel();
+                newExcelExport('p ' + currentParsingPage + ' end');
             }
             break;
 
@@ -544,10 +544,7 @@ async function onMessage(request, sender, callback) {
     }
 }
 
-/** Final method. Return parsed products to popup.js for export to excel **/
-function exportToExcel() {
-    sendToPopup('exportToExcel');
-}
+
 
 function sendProductData(productData) {
     sendToPopup('productData', productData);

@@ -9,42 +9,42 @@
     <title></title>
 </head>
 <body>
-<h2>Всрацца-парсер Allegro.pl v 1.0</h2>
-<h3>Управління</h3>
-<div class="control">
-    <div class="buttons">
-        <table class="control_panel leftLine">
-            <tbody>
-            <tr>
-                <td>
-                    <button class="button" id="start">Запуск парсера</button>
-                </td>
-                <td>
-                    <button class="button" id="stop">Зупинити парсер</button>
-                </td>
-                <td>
-                    <button class="button" id="export">Експортувати що є</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="control_icons">
-        <progress id="pauseBar" class="control_progress" id="file" value="0" max="100"> 32% </progress>
-        <img class="control_icon" src="/dist/img/product.png">
+<h2>Allegro prs v 1.1</h2>
+<progress id="pauseBar" class="control_progress" id="file" value="0" max="100"> 32%</progress>
+<div class="popup_control_buttons">
+    <span id="start"  class="popup_control_button">
+        <img class="popup_control_icon filter-white" src="/dist/img/play.svg">
+    </span>
+
+    <span id="stop" class="popup_control_button">
+        <img  class="popup_control_icon filter-white" src="/dist/img/stop.svg">
+    </span>
+
+    <span id="export" class="popup_control_button">
+        <img  class="popup_control_icon filter-white" src="/dist/img/export.svg">
+    </span>
+
+    <span id="collapse" class="popup_control_button control_button_last">
+        <img class="popup_control_icon filter-white" src="/dist/img/collapse.svg">
+    </span>
+
+
+    <div class="indicators">
+
+        <img class="control_icon" src="/dist/img/product.svg">
         <div class="control_text" id="current_product_text">1</div>
-        <img class="control_icon" src="/dist/img/page.png">
+        <img class="control_icon" src="/dist/img/catalog.svg">
         <div class="control_text" id="current_page_text">1</div>
     </div>
 </div>
-<h3>Налаштування</h3>
-<div class="settings_block_main">
+<h3 class="collapsed">Налаштування</h3>
+<div class="collapsed settings_block_main">
     <div class="settings_block">
         <table class="settings leftLine">
             <tbody>
             <tr>
-                <td>Наступна сторінка списка товарів (мс) :</td>
-                <td><input type="number" id="nexPageMS" placeholder="25000" value="25000" min="25000" step="100"></td>
+                <td>Наступна сторінка (мс) :</td>
+                <td><input type="number" id="nexPageMS" placeholder="12000" value="12000" min="12000" step="100"></td>
             </tr>
             <tr>
                 <td>Наступний товар (мс) :</td>
@@ -53,7 +53,7 @@
             </tr>
             <tr>
                 <td>У разі помилки (мс) :</td>
-                <td><input type="number" id="reload403MS" placeholder="25000" value="25000" min="25000" step="100"></td>
+                <td><input type="number" id="reload403MS" placeholder="360000" value="360000" min="360000" step="100"></td>
             </tr>
             </tbody>
         </table>
@@ -78,8 +78,8 @@
         </table>
     </div>
 </div>
-<h3>Логи</h3>
-<div class="leftLine">
+<h3 class="collapsed">Логи</h3>
+<div class="leftLine collapsed">
     <div class='logger' id="logger">
         Увага!!
         <br>
